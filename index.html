@@ -9,6 +9,8 @@
   <!-- Firebase compat SDK (CDN) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
 
   <style>
     :root {
@@ -535,31 +537,42 @@
   </div>
 
   <script>
-    /* =========================
+        /* =========================
        Firebase init (compat)
     */
     const firebaseConfig = {
       apiKey: "AIzaSyDFI1MepkOB4VAPqCKDYh60Ruc4UfwqUgy",
       authDomain: "quizeconomia.firebaseapp.com",
       projectId: "quizeconomia",
-      storageBucket: "quizeconomia.firebasestorage.app",
+      storageBucket: "quizeconomia.appspot.com",
       messagingSenderId: "789254280953",
       appId: "1:789254280953:web:ba032626e34beb3593b428"
     };
+
     let db = null;
     let firebaseAvailable = false;
+
     try {
       if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
         firebaseAvailable = true;
-        console.log('Firebase inicializado (compat)');
+        console.log('✅ Firebase inicializado (compat)');
+
+        // Teste rápido: verificar conexão
+        db.collection("ranking").limit(1).get()
+          .then(() => console.log("Firestore conectado e pronto."))
+          .catch(err => console.warn("⚠️ Erro ao acessar Firestore:", err));
       }
-    } catch (err) { console.warn('Firebase não inicializado:', err); firebaseAvailable = false; }
+    } catch (err) {
+      console.warn('⚠️ Firebase não inicializado:', err);
+      firebaseAvailable = false;
+    }
 
     /* =========================
        preload / audio
     */
+
     const preloadImages = ['assets/tela_fundo.png', 'assets/titulo.png', 'assets/mascote.png', 'assets/moeda.png', 'assets/x.png', 'assets/jogar.png', 'assets/ranking.png', 'assets/som_ligado.png', 'assets/som_desligado.png'];
     preloadImages.forEach(s => { const i = new Image(); i.src = s; });
 
