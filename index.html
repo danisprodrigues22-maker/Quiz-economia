@@ -68,37 +68,30 @@
       border: 4px solid rgba(0, 0, 0, 0.06);
     }
 
-    /* Menu: painel marrom — versão compacta e centralizada (ajustada) */
+    /* Menu: painel marrom — compacto, ligeiramente maior que os botões */
     .stardew-menu {
-      width: 220px;
+      width: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      /* <-- garante centralização vertical */
-      gap: 10px;
+      gap: 8px;
       padding: 10px;
       border: 4px solid var(--brown-border);
       background: linear-gradient(180deg, #f4d9a8, #eed7a2);
       box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.12);
       border-radius: 12px;
       margin: 0 auto;
-      min-height: 120px;
-      /* garante espaço para centralizar verticalmente */
+      min-height: 104px;
       box-sizing: border-box;
     }
 
-    /* removi a regra .stardew-menu .title porque não há título interno */
-
-    /* botões de imagem centralizados e mais compactos */
     .stardew-menu .menu-img-btn {
       display: block;
-      width: 78%;
-      /* ocupam 78% da largura do card */
-      max-width: 140px;
+      width: 75%;
+      max-width: 130px;
       padding: 0;
       margin: 6px auto;
-      /* centraliza horizontalmente */
       border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
@@ -112,25 +105,13 @@
       width: 100%;
       height: auto;
       display: block;
-      pointer-events: none
+      pointer-events: none;
     }
 
     .stardew-menu .menu-img-btn:active {
       transform: translateY(2px)
     }
 
-    .menu-img-btn img {
-      width: 100%;
-      height: auto;
-      display: block;
-      pointer-events: none
-    }
-
-    .menu-img-btn:active {
-      transform: translateY(2px)
-    }
-
-    /* linha do ícone de som centralizada */
     .menu-row {
       display: flex;
       gap: 8px;
@@ -154,26 +135,48 @@
       display: block
     }
 
-    /* quiz area */
+    /* DIMINUIÇÃO DO CARTÃO MARROM PRINCIPAL (QUIZ) */
     .quiz-card {
       flex: 1;
-      max-width: 640px;
-      min-width: 260px;
-      padding: 16px;
+      max-width: 560px;
+      /* limite geral do cartão */
+      min-width: 220px;
+      padding: 12px;
+      /* um pouco menor */
+      box-sizing: border-box;
     }
 
+    /* AREA DE PERGUNTAS: reduzida, alinhada à esquerda para "colar" o mascote */
+    .question-table {
+      position: relative;
+      max-width: 520px;
+      /* <-- reduzido para caber semelhante à sua imagem */
+      margin: 8px auto;
+      text-align: left;
+      padding: 10px 14px;
+      box-sizing: border-box;
+      background: transparent;
+    }
+
+    /* mascote ao canto esquerdo dentro da question-table */
     .mascote-wrap {
       display: flex;
       gap: 12px;
-      align-items: flex-start
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 6px;
     }
 
     #mascote {
-      width: 120px;
+      width: 110px;
+      /* um pouco maior para ficar parecido com a sua imagem */
       height: auto;
       display: block;
+      border-radius: 8px;
+      flex: 0 0 auto;
       animation: flut 3s ease-in-out infinite;
-      border-radius: 12px
     }
 
     @keyframes flut {
@@ -184,49 +187,52 @@
       }
 
       50% {
-        transform: translateY(-10px)
+        transform: translateY(-8px)
       }
     }
 
-    /* balão que expande conforme o texto aparece */
+    /* balão ao lado do mascote — fica mais compacto e centralizado sobre as moedas */
     .speech {
       background: #fff;
       border: 2px solid rgba(0, 0, 0, 0.06);
-      padding: 10px;
+      padding: 8px 12px;
       border-radius: 10px;
-      min-height: 48px;
-      width: 100%;
       font-size: 14px;
       line-height: 1.25;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
       overflow: hidden;
-      max-height: 48px;
-      transition: max-height 240ms ease, padding 180ms ease;
+      max-width: 320px;
+      /* pequeno e parecido com sua captura */
+      width: calc(100% - 132px);
+      /* ocupa o resto do espaço ao lado do mascote */
+      transition: max-height 220ms ease, padding 160ms ease;
     }
 
     .top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 8px
+      margin-top: 8px;
     }
 
     #qCounter {
-      font-weight: 700
+      display: none !important;
     }
 
+    /* você pediu escondê-lo */
     #timer {
       font-weight: 800;
-      color: #d97706
+      color: #d97706;
+      margin-left: 6px;
     }
 
-    /* progresso: grid 6 colunas (6 x 2 linhas = 12) */
+    /* progresso: centralizado em 6 colunas, aparece logo abaixo do balão */
     .progress {
       display: grid;
       grid-template-columns: repeat(6, 34px);
       gap: 8px;
       justify-content: center;
-      margin: 12px auto;
+      margin: 10px auto 14px;
     }
 
     .coin {
@@ -240,57 +246,48 @@
 
     .coin.active {
       opacity: 1;
-      transform: translateY(-6px)
+      transform: translateY(-6px);
     }
 
-    .question-table {
-      max-width: 640px;
-      margin: 12px auto;
-      text-align: center
-    }
-
-    #question {
-      font-weight: 800;
-      font-size: 18px;
-      margin: 10px 0
-    }
-
+    /* alternativas: ocupam mais largura (quase toda a tabela marrom) */
     .options {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      justify-items: center
+      grid-template-columns: repeat(1, 1fr);
+      /* uma coluna em mobile/desktop para as opções largas */
+      gap: 12px;
+      justify-items: center;
+      width: 100%;
     }
 
     .option {
       background: #f3f4f6;
-      padding: 12px;
+      padding: 14px 18px;
       border-radius: 10px;
       border: 2px solid transparent;
       cursor: pointer;
       text-align: left;
-      font-size: 15px;
+      font-size: 16px;
       transition: transform .12s, box-shadow .12s;
       width: 100%;
-      max-width: 340px
+      max-width: 100%;
+      /* ocupa toda a largura disponível dentro de question-table */
+      box-sizing: border-box;
     }
 
     .option:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.06)
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.06);
     }
 
     .option.correct {
       background: #16a34a;
       color: white;
-      border-color: rgba(0, 0, 0, 0.06);
       box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08)
     }
 
     .option.wrong {
       background: #dc2626;
       color: white;
-      border-color: rgba(0, 0, 0, 0.06)
     }
 
     #explainBox {
@@ -309,7 +306,7 @@
     #streakIndicator {
       display: flex;
       gap: 6px;
-      align-items: center
+      align-items: center;
     }
 
     .st-star {
@@ -361,70 +358,35 @@
     }
 
     /* responsividade */
-    @media (max-width:980px) {
-      .wrap {
-        flex-direction: column;
-        align-items: center;
-        padding: 8px
-      }
+    @media (min-width:720px) {
 
-      .stardew-menu {
-        width: 92%;
-        max-width: 320px
+      /* em telas maiores, manter uma coluna larga para as opções (sem duas colunas que encolhem) */
+      .options {
+        grid-template-columns: 1fr;
       }
+    }
 
-      .quiz-card {
-        width: 92%
-      }
-
+    @media (max-width:720px) {
       .mascote-wrap {
-        flex-direction: column;
-        align-items: center
+        gap: 10px;
+      }
+
+      #mascote {
+        width: 86px;
       }
 
       .speech {
-        width: 100%
-      }
-
-      .options {
-        grid-template-columns: 1fr
+        max-width: 260px;
+        width: calc(100% - 110px);
       }
 
       .progress {
         grid-template-columns: repeat(6, 28px)
       }
-
-      .menu-img-btn {
-        max-width: 160px
-      }
-    }
-
-    @media (max-width:420px) {
-      #mascote {
-        width: 90px
-      }
-
-      .coin {
-        width: 28px;
-        height: 28px
-      }
-
-      .st-star {
-        width: 16px;
-        height: 16px
-      }
-
-      .speech {
-        font-size: 13px
-      }
-
-      .menu-img-btn {
-        max-width: 140px
-      }
     }
 
     .hidden {
-      display: none
+      display: none;
     }
   </style>
 </head>
@@ -454,23 +416,25 @@
       </div>
     </div>
 
-
     <!-- QUIZ -->
     <div id="quizCard" class="card quiz-card hidden" role="application" aria-live="polite">
-      <div class="mascote-wrap">
-        <img id="mascote" src="assets/mascote.png" alt="Mascote">
-        <div style="flex:1">
-          <div id="speech" class="speech" aria-live="polite"></div>
-          <div class="top-row">
-            <div id="qCounter">Questão 1 / 12</div>
-            <div id="timer">Tempo: 20s</div>
-          </div>
-        </div>
-      </div>
 
       <div class="question-table">
+        <!-- mascote posicionado dentro da question-table, canto superior-esquerdo -->
+        <div class="mascote-wrap">
+          <img id="mascote" src="assets/mascote.png" alt="Mascote" />
+          <div style="flex:1;min-width:0;">
+            <div id="speech" class="speech" aria-live="polite"></div>
+            <div class="top-row"
+              style="margin-top:8px;align-items:center;display:flex;justify-content:flex-end;gap:8px">
+              <div id="timer">Tempo: 20s</div>
+            </div>
+          </div>
+        </div>
+
         <div class="progress" id="progressBar" aria-hidden="true"></div>
-        <div id="question">Pergunta aparecerá aqui</div>
+        <div id="question" style="display:none;">Pergunta aparecerá aqui</div>
+        <!-- pergunta fica oculta (mas mantida p/ SR) -->
         <div class="options" id="options" role="list"></div>
 
         <div id="explainBox" aria-hidden="true">
@@ -541,22 +505,27 @@
       return a;
     }
 
-    // SONS
-    const correctSound = loadAudio('assets/acerto.mp3', 0.9, false);
-    const wrongSound = loadAudio('assets/erro.mp3', 1.0, false);
-    const nextSound = loadAudio('assets/next.mp3', 0.85, false);
+    // SONS (ajustados volumes)
+    const correctSound = loadAudio('assets/acerto.mp3', 0.45, false);
+    const wrongSound = loadAudio('assets/erro.mp3', 0.92, false);
+    const nextSound = loadAudio('assets/next.mp3', 0.38, false);
     const winSound = loadAudio('assets/parabens.mp3', 0.9, false);
     const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
     const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
-    const clickSound = loadAudio('assets/click.mp3', 0.6, false);
+    const clickSound = loadAudio('assets/click.mp3', 0.55, false);
     const explainOpenSound = loadAudio('assets/explain_open.mp3', 0.6, false);
     const ambientSound = loadAudio('assets/ambiente.mp3', 0.28, true);
 
+    window.addEventListener('load', () => {
+      try {
+        ambientSound.currentTime = 0;
+        const p = ambientSound.play();
+        if (p && p.catch) p.catch(() => { });
+      } catch (e) { }
+    });
+
     let soundEnabled = true;
-    function playSound(soundObj) {
-      if (!soundEnabled || !soundObj) return;
-      try { soundObj.currentTime = 0; const p = soundObj.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { }
-    }
+    function playSound(soundObj) { if (!soundEnabled || !soundObj) return; try { soundObj.currentTime = 0; const p = soundObj.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
     function startAmbient() { if (soundEnabled) try { ambientSound.currentTime = 0; ambientSound.play().catch(() => { }); } catch (e) { } }
     function stopAmbient() { try { ambientSound.pause(); ambientSound.currentTime = 0; } catch (e) { } }
 
@@ -571,41 +540,40 @@
     }
     document.body.addEventListener('click', tryUnlockAudio, { once: true });
 
-    /* ============================
-       Banco de perguntas e config (novo banco fornecido)
-       ============================ */
     const questionBank = [
-      { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento"], correctIndex: 0, explain: "PIB é a soma de todos os bens e serviços finais produzidos em um país." },
-      { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos", "Investir em startups", "Fiscalizar políticos", "Regular juros"], correctIndex: 3, explain: "O BC controla a inflação e garante a estabilidade da moeda." },
-      { question: "O que é inflação?", options: ["Valorização de criptomoeda", "Alta de preços", "Reforma política", "Abertura de capital"], correctIndex: 1, explain: "Inflação é o aumento contínuo e generalizado dos preços." },
-      { question: "O que é investimento?", options: ["Comprar roupas", "Aplicar dinheiro", "Gasto público", "Transferir dinheiro"], correctIndex: 1, explain: "Investir é aplicar recursos esperando retorno futuro." },
-      { question: "Para que serve uma reserva de emergência?", options: ["Comprar NFTs", "Comprar ações", "Cobrir imprevistos", "Campanha política"], correctIndex: 2, explain: "Reserva protege contra despesas inesperadas sem endividamento." },
-      { question: "O que é capital de giro?", options: ["Dinheiro de youtubers", "Despesas operacionais", "Receita total", "Dívida com fornecedores"], correctIndex: 1, explain: "Capital de giro financia as operações do dia a dia da empresa." },
-      { question: "Diferença entre receita e lucro?", options: ["Gasto do governo", "Receita entra, lucro sobra", "Lucro pago a influenciadores", "Não há diferença"], correctIndex: 1, explain: "Receita é o total recebido; lucro é o que sobra após custos." },
-      { question: "Objetivo da política fiscal expansionista?", options: ["Aumentar impostos", "Reduzir poder de compra", "Aumentar gastos/reduzir impostos", "Diminuir partidos"], correctIndex: 2, explain: "Busca estimular a economia com mais gastos ou menos impostos." },
-      { question: "Relação entre juros e inflação?", options: ["Juros altos combatem inflação", "Juros altos aumentam inflação", "Juros baixos combatem inflação", "Sem relação"], correctIndex: 0, explain: "Taxas mais altas reduzem consumo e ajudam a controlar preços." },
-      { question: "O que é modelo de negócios?", options: ["Criar e entregar valor", "Plano político", "Orçamento da Netflix", "Lista de produtos"], correctIndex: 0, explain: "Define como a empresa gera valor e se mantém viável." },
-      { question: "O que é diversificação?", options: ["Ação de ex-ministro", "Comprar só 1 ativo", "Nova sede", "Espalhar investimentos"], correctIndex: 3, explain: "Diversificar reduz riscos ao investir em ativos diferentes." },
-      { question: "O que é empreendedorismo social?", options: ["Lucrar", "Postar em redes", "Resolver problema social", "Iniciativa do governo"], correctIndex: 2, explain: "Empreender com foco em impacto social ou ambiental." },
-      { question: "O que é um ativo?", options: ["Conta de luz", "Bem convertível em dinheiro", "Nova lei", "Renda de youtuber"], correctIndex: 1, explain: "Ativos são bens ou direitos com valor econômico futuro." },
-      { question: "O que é fluxo de caixa?", options: ["Entradas e saídas de dinheiro", "Diferença da Receita Federal", "Qtd. de produtos vendidos", "Valor total de dívidas"], correctIndex: 0, explain: "Mostra entradas e saídas financeiras de um período." },
-      { question: "O que é crowdfunding?", options: ["Aposta", "Doação de youtuber", "Financiamento coletivo", "Venda de ações"], correctIndex: 2, explain: "Forma de financiar projetos com várias pessoas apoiando." },
-      { question: "O que é juro composto?", options: ["Juro sobre capital inicial", "Taxa de banco", "Juro sobre capital e juros", "Juro do BC"], correctIndex: 2, explain: "É o 'juro sobre juro', que gera crescimento exponencial." },
-      { question: "Diferença entre ativo e passivo?", options: ["Ativo de político, passivo dívida", "Ativo põe dinheiro, passivo tira", "Ativo compra, passivo vende", "Não há diferença"], correctIndex: 1, explain: "Ativo gera renda; passivo são dívidas/obrigações." },
-      { question: "Para que serve orçamento pessoal?", options: ["Gastar sem controle", "Planejar gastos", "Campanha de youtuber", "Estimativa presidencial"], correctIndex: 1, explain: "Ajuda a controlar despesas e alcançar objetivos financeiros." },
-      { question: "Empreendedorismo por necessidade?", options: ["Atender mercado", "Produtos digitais", "Defendido por político", "Abrir por falta de emprego"], correctIndex: 3, explain: "Motivado pela falta de emprego, não por oportunidade." },
-      { question: "O que é marketing digital?", options: ["Criar podcasts", "Ações na internet", "Promoção política", "Venda em loja"], correctIndex: 1, explain: "Conjunto de ações online para atrair e fidelizar clientes." },
-      { question: "O que é renda fixa?", options: ["Risco zero", "Rentabilidade previsível", "Só fundos", "Investimento de político"], correctIndex: 1, explain: "Rentabilidade definida ou pré-calculada, como títulos públicos." },
-      { question: "O que é empreendedorismo feminino?", options: ["Equipe só de mulheres", "Negócio p/ público feminino", "Mulheres que gerenciam", "Ação de influencer"], correctIndex: 2, explain: "Empresas criadas e lideradas por mulheres." },
-      { question: "O que é marketing de conteúdo?", options: ["Conteúdo político", "Atrair e engajar público", "Compra de anúncios", "Blog de youtuber"], correctIndex: 1, explain: "Produzir conteúdo relevante para atrair clientes." },
-      { question: "O que é endividamento?", options: ["Pegar empréstimo", "Pagar contas em dia", "Despesas maiores que receitas", "Aumento do salário mínimo"], correctIndex: 2, explain: "Ocorre quando obrigações superam a capacidade de pagamento." },
-      { question: "O que é uma startup?", options: ["Artesanato local", "Música de youtuber", "Série de tecnologia", "Empresa escalável"], correctIndex: 3, explain: "Negócio inovador com potencial de rápido crescimento." },
-      { question: "O que é imposto de renda?", options: ["Imposto sobre videogames", "Imposto sobre importados", "Imposto municipal", "Imposto sobre renda"], correctIndex: 3, explain: "Tributo cobrado sobre a renda de pessoas e empresas." },
-      { question: "O que é empreendedorismo digital?", options: ["Canal no YouTube", "Político em redes", "Negócio na internet", "Loja de rua"], correctIndex: 2, explain: "Usa a internet e tecnologia como base do negócio." },
-      { question: "O que é microcrédito?", options: ["Empréstimo pequeno", "Grandes empresas", "R$1 milhão", "Taxa do BC"], correctIndex: 0, explain: "Crédito de pequeno valor para microempreendedores." },
-      { question: "O que é risco em investimentos?", options: ["Possibilidade de perder dinheiro", "Investimento do BC", "Lucro garantido", "Imposto"], correctIndex: 0, explain: "Quanto maior o retorno potencial, maior o risco." },
-      { question: "O que é taxa Selic?", options: ["Privatizar estatais", "Taxa básica de juros", "Juros de bancos", "Valor pago a youtubers"], correctIndex: 1, explain: "É a taxa básica de juros que orienta o crédito no país." }
+      { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento em Bolsa"], correctIndex: 0, explain: "A soma de todos os bens e serviços finais produzidos em uma economia. É o principal indicador para medir o tamanho e a saúde de um país." },
+      { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos de youtubers", "Investir em startups", "Fiscalizar piadas de políticos", "Regular a taxa de juros para controlar a inflação"], correctIndex: 3, explain: "Sua função é garantir a estabilidade do poder de compra da moeda, controlando a inflação." },
+      { question: "O que é inflação?", options: ["Valorização de criptomoeda", "Aumento generalizado e contínuo dos preços", "Reforma política do governo", "Abertura de capital de uma empresa"], correctIndex: 1, explain: "A inflação causa a diminuição do poder de compra da moeda." },
+      { question: "O que é investimento?", options: ["Comprar roupas de luxo", "Aplicar dinheiro para fazê-lo crescer", "Gasto do governo em obras", "Transferir dinheiro entre familiares"], correctIndex: 1, explain: "O objetivo é fazer o dinheiro trabalhar para você e crescer ao longo do tempo." },
+      { question: "Para que serve uma reserva de emergência?", options: ["Comprar NFTs de youtubers", "Comprar ações", "Cobrir despesas inesperadas (desemprego, saúde)", "Financiar campanha política"], correctIndex: 2, explain: "Ela oferece segurança financeira, evitando que você precise se endividar em caso de imprevistos." },
+      { question: "O que é capital de giro?", options: ["Dinheiro de youtubers", "Dinheiro para pagar despesas operacionais (salários, aluguel)", "Receita total de vendas", "Dívida com fornecedores"], correctIndex: 1, explain: "Sem capital de giro, uma empresa não consegue manter suas atividades funcionando." },
+      { question: "Diferença entre receita e lucro?", options: ["Receita é o que o governo gasta", "Receita é o que entra; lucro é o que sobra após os custos", "Lucro é o que empresas pagam a influenciadores", "Não há diferença"], correctIndex: 1, explain: "O lucro realmente reflete a saúde financeira do negócio." },
+      { question: "Objetivo da política fiscal expansionista?", options: ["Aumentar impostos para jogos de apostas", "Reduzir poder de compra e tirar a moeda de circulação vendendo títulos", "Aumentar gastos e/ou reduzir impostos para estimular a economia", "Diminuir partidos políticos"], correctIndex: 2, explain: "O objetivo é injetar dinheiro na economia para aumentar o consumo e o investimento." },
+      { question: "Relação entre taxa de juros e inflação?", options: ["Juros altos ajudam a combater a inflação", "Juros altos aumentam a inflação", "Juros baixos ajudam a combater a inflação", "Sem relação"], correctIndex: 0, explain: "Juros mais altos desincentivam o consumo e o crédito, controlando os preços." },
+      { question: "O que é modelo de negócios?", options: ["Descrição de como a empresa cria, entrega e captura valor", "Plano de marketing de político", "Quantia que Netflix usou para financiar filmes e séries", "Lista de produtos"], correctIndex: 0, explain: "O modelo de negócios é a estrutura que sustenta a viabilidade de uma empresa no mercado." },
+      { question: "O que é diversificação em investimentos?", options: ["Ação de ex-ministro", "Comprar só um tipo de ativo", "Construção de nova sede", "Espalhar investimentos em diferentes ativos para reduzir risco"], correctIndex: 3, explain: "Distribuir os investimentos diminui a chance de perder dinheiro." },
+      { question: "O que é empreendedorismo social?", options: ["Criar empresa para lucrar", "Interagir com seguidores em redes sociais", "Criar empresa para resolver problema social ou ambiental", "Iniciativa do governo para combater pobreza"], correctIndex: 2, explain: "O objetivo principal é causar um impacto positivo na sociedade." },
+      { question: "O que é um ativo?", options: ["Conta de luz", "Bem ou direito que pode ser convertido em dinheiro", "Nova lei de imposto", "Valor que youtuber recebe"], correctIndex: 1, explain: "Ativos são tudo o que pode gerar benefício econômico futuro." },
+      { question: "O que é fluxo de caixa?", options: ["Movimento de entrada e saída de dinheiro em um período", "Diferença de ganhos da receita federal de um trimestre para o outro", "Quantidade de produtos vendidos", "Valor total de dívidas"], correctIndex: 0, explain: "Analisar o fluxo de caixa é essencial para entender a saúde financeira de um negócio." },
+      { question: "O que é crowdfunding?", options: ["Modelo de negócio de jogos de aposta", "Pedido de doação de youtuber", "Financiamento coletivo pela internet, sem um único grande investidor", "Venda de ações na bolsa"], correctIndex: 2, explain: "É uma alternativa de financiamento coletivo, geralmente pela internet." },
+      { question: "O que é juro composto?", options: ["Juro sobre o capital inicial", "Juros que banco central cobra", "Juro sobre o capital inicial e juros acumulados", "Taxa de banco"], correctIndex: 2, explain: "É o 'juro sobre juro', o que faz o dinheiro crescer de forma exponencial." },
+      { question: "Diferença entre passivo e ativo?", options: ["Ativo é patrimônio de político, passivo é dívida", "Ativo é o que põe dinheiro no bolso; passivo é o que tira", "Ativo é o que compra, passivo é o que vende", "Não há diferença"], correctIndex: 1, explain: "Passivo é o oposto de ativo, representando as dívidas e obrigações." },
+      { question: "Para que serve o orçamento pessoal?", options: ["Gastar dinheiro sem controle", "Entender para onde o dinheiro está indo e planejar gastos", "Financiar campanha de youtuber", "Estimativa de gastos do presidente"], correctIndex: 1, explain: "Ele ajuda a tomar decisões mais conscientes e alcançar objetivos financeiros." },
+      { question: "O que é empreendedorismo por necessidade?", options: ["Abrir negócio para atender a mercado", "Venda de produtos digitais", "Tipo de empreendedorismo que político defende", "Criar um negócio por não encontrar emprego formal"], correctIndex: 3, explain: "É motivado pela falta de opção, e não por uma oportunidade de mercado." },
+      { question: "O que é marketing digital?", options: ["Criação de podcasts", "Conjunto de ações de marketing na internet", "Promoção de político", "Venda em loja virtual"], correctIndex: 1, explain: "O objetivo é atrair clientes e construir relacionamentos usando a tecnologia." },
+      { question: "O que é renda fixa?", options: ["Investimento com risco zero", "Investimento com rentabilidade conhecida ou pré-calculada", "Investimento apenas em fundos", "Investimento de político"], correctIndex: 1, explain: "É considerado mais seguro, pois o investidor sabe como será a rentabilidade." },
+      { question: "O que é empreendedorismo feminino?", options: ["Negócio com equipe só de mulheres", "Negócio para o público feminino", "Mulheres que criam e gerenciam seus próprios negócios", "Ação de influencer"], correctIndex: 2, explain: "Contribui para a autonomia financeira feminina e a diversidade no mercado." },
+      { question: "O que é marketing de conteúdo?", options: ["Produção de conteúdo de político", "Criação de conteúdo para atrair e engajar público", "Compra de anúncios", "Blog sobre vida de youtuber"], correctIndex: 1, explain: "O objetivo é educar, entreter e converter clientes de forma indireta." },
+      { question: "O que é endividamento?", options: ["Pegar empréstimo", "Pagar contas em dia", "Situação em que despesas são maiores que receitas", "Aumento do salário mínimo"], correctIndex: 2, explain: "O alto endividamento pode levar à perda de ativos e instabilidade financeira." },
+      { question: "O que é uma startup?", options: ["Empresa pequena que vende artesanato apenas no estado no qual reside", "Música de youtuber", "Uma série que aborda temas como tecnologias", "Empresa de tecnologia em busca de modelo de negócio escalável"], correctIndex: 3, explain: "Busca resolver um problema de forma inovadora em condições de incerteza." },
+      { question: "O que é imposto de renda?", options: ["Valor que as pessoas pagam para declarar consumo em videogames/streamings", "Imposto sobre produtos importados", "Imposto municipal sobre imóveis", "Imposto federal sobre a renda de pessoas e empresas"], correctIndex: 3, explain: "É um dos principais meios do governo arrecadar recursos para financiar serviços públicos." },
+      { question: "O que é empreendedorismo digital?", options: ["Canal no YouTube para vlogs", "Político usando redes sociais", "Negócio que usa a internet e tecnologias digitais", "Loja de rua"], correctIndex: 2, explain: "Explora o potencial da internet para atingir um público amplo com baixo custo." },
+      { question: "O que é microcrédito?", options: ["Empréstimo de pequeno valor para microempreendedores", "Empréstimo para grandes empresas", "Empréstimo de R$1 milhão", "Taxa de juros do Banco Central"], correctIndex: 0, explain: "Visa promover a inclusão financeira e o desenvolvimento econômico em comunidades." },
+      { question: "O que é risco em investimentos?", options: ["Possibilidade de perder dinheiro em um investimento", "Quantia que o Banco Central investiu", "Lucro garantido", "Valor do imposto"], correctIndex: 0, explain: "Em geral, quanto maior o potencial de retorno, maior é o risco envolvido." },
+      { question: "O que é a taxa Selic?", options: ["Taxa para privatizar estatais", "Taxa básica de juros da economia brasileira", "Juros que bancos cobram dos clientes", "Valor que governo paga a youtubers"], correctIndex: 1, explain: "Serve como referência para todas as outras taxas de juros do país, influenciando o crédito." }
     ];
+
+
 
     const quizSize = 12;
 
@@ -660,7 +628,7 @@
     let correctCount = 0;
 
     /* ============================
-       Funções utilitárias
+       Utilitários
        ============================ */
     function shuffleArrayFisherYates(array) {
       const a = array.slice();
@@ -670,12 +638,13 @@
       }
       return a;
     }
+
     function generateQuiz() {
       const copy = shuffleArrayFisherYates(questionBank);
       return copy.slice(0, quizSize);
     }
+
     function updateProgress() {
-      // cria grid 6xN (com 12 elementos se quizSize=12)
       progressBar.innerHTML = '';
       const total = quizData.length || quizSize;
       for (let i = 0; i < total; i++) {
@@ -684,32 +653,39 @@
         progressBar.appendChild(d);
       }
     }
+
     function updateScoreDisplay() { scoreEl.textContent = `Pontuação: ${score} | Multiplicador: x${multiplier.toFixed(2)}`; }
 
-    /* typing + expand speech */
+    /* typing + balão que expande enquanto digita */
     function typeSpeech(text, onDone) {
-      // expand speech smoothly
-      speechEl.style.maxHeight = '300px';
-      speechEl.style.padding = '10px';
       stopTyping();
+      speechEl.style.overflow = 'hidden';
+      speechEl.style.maxHeight = '28px';
+      speechEl.style.padding = '6px';
       speechEl.textContent = '';
+
       let i = 0;
       typingHandle = setInterval(() => {
         speechEl.textContent += text.charAt(i) || '';
         i++;
+        // expande conforme caracteres escritos
+        const newH = Math.min(48 + Math.floor(i / 18) * 18, 420);
+        speechEl.style.maxHeight = newH + 'px';
+        if (newH > 100) speechEl.style.padding = '10px';
+        speechEl.scrollTop = speechEl.scrollHeight;
         if (i > text.length) {
           clearInterval(typingHandle);
           typingHandle = null;
+          speechEl.style.maxHeight = Math.min(48 + Math.ceil(text.length / 18) * 18, 420) + 'px';
+          speechEl.style.padding = '10px';
           if (typeof onDone === 'function') onDone();
         }
       }, 24);
     }
     function stopTyping() { if (typingHandle) { clearInterval(typingHandle); typingHandle = null; } }
 
-    /* explain open/close with smooth expand */
     function openExplainBox() {
       explainBox.style.display = 'block';
-      // small delay to allow display:block then animate
       requestAnimationFrame(() => {
         explainBox.style.maxHeight = '400px';
         explainBox.style.padding = '10px';
@@ -719,7 +695,6 @@
     function closeExplainBox() {
       explainBox.style.maxHeight = '0';
       explainBox.style.padding = '0 10px';
-      // after transition hide
       setTimeout(() => { explainBox.style.display = 'none'; }, 260);
     }
 
@@ -735,6 +710,7 @@
         setTimeout(() => c.remove(), 1800);
       }
     }
+
     function updateStreakIndicator() {
       const stars = Array.from(document.querySelectorAll('.st-star'));
       let lit = streak % 3;
@@ -743,7 +719,7 @@
     }
 
     /* ============================
-       MENU interactions
+       Menu interactions
        ============================ */
     imgPlay.addEventListener('click', () => { playSound(clickSound); tryUnlockAudio(); startGame(); });
     imgRanking.addEventListener('click', () => { playSound(clickSound); showRanking(); });
@@ -755,7 +731,7 @@
     });
 
     /* ============================
-       JOGO: iniciar/carregar pergunta
+       Iniciar jogo / carregar pergunta
        ============================ */
     function startGame() {
       titleImg.style.display = 'none';
@@ -770,6 +746,7 @@
       updateScoreDisplay(); updateProgress(); updateStreakIndicator();
       loadQuestion();
     }
+
     function loadQuestion() {
       clearInterval(timerHandle);
       stopTyping();
@@ -780,10 +757,9 @@
       closeExplainBox(); explainText.textContent = '';
 
       const q = quizData[currentQuestion];
-      qCounterEl.textContent = `Questão ${currentQuestion + 1} / ${quizData.length}`;
-      // question text is shown in speech balloon via mascote
-      // options area shows choices (questionEl kept for clarity)
+      // questionEl oculto visualmente, mantido para acessibilidade
       questionEl.textContent = '';
+
       optionsEl.innerHTML = '';
 
       const idx = shuffleArrayFisherYates([0, 1, 2, 3]);
@@ -797,9 +773,13 @@
         optionsEl.appendChild(btn);
       });
 
-      // Mascote fala (typing) - show question in speech balloon, timer starts after typing
+      // garante balão fechado antes de digitar
+      speechEl.style.maxHeight = '28px';
+      speechEl.style.padding = '6px';
+      speechEl.textContent = '';
+
+      // Mascote fala (typing). Timer começa quando terminar.
       typeSpeech(q.question, () => {
-        // when typing done, also set questionEl for screen readers / visibility
         questionEl.textContent = q.question;
         startTimer();
         const firstBtn = optionsEl.querySelector('.option'); if (firstBtn) firstBtn.focus();
@@ -807,7 +787,7 @@
     }
 
     /* ============================
-       TIMER
+       Timer
        ============================ */
     function startTimer() {
       clearInterval(timerHandle);
@@ -827,7 +807,7 @@
     function stopTimer() { if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
 
     /* ============================
-       PROCESSAR RESPOSTA
+       Processar resposta
        ============================ */
     function selectAnswer(selectedIndex, correctIndex) {
       stopTimer();
@@ -846,7 +826,7 @@
         mascoteEl.classList.add('wrong'); setTimeout(() => mascoteEl.classList.remove('wrong'), 800);
       }
 
-      let prevMultiplier = multiplier;
+      const prevMultiplier = multiplier;
       if (selectedIndex !== null && selectedIndex === correctIndex) {
         streak++;
         multiplier = 1 + Math.floor(streak / 3) * 0.25;
@@ -872,9 +852,7 @@
       nextBtn.disabled = false;
     }
 
-    /* ============================
-       PRÓXIMA
-       ============================ */
+    /* Próxima */
     nextBtn.addEventListener('click', () => {
       playSound(nextSound);
       currentQuestion++;
@@ -882,15 +860,11 @@
       else showResult();
     });
 
-    /* ============================
-       EXPLICAÇÃO
-       ============================ */
+    /* Explicação */
     showExplainBtn.addEventListener('click', () => openExplainBox());
     closeExplainBtn.addEventListener('click', () => closeExplainBox());
 
-    /* ============================
-       RESULTADO
-       ============================ */
+    /* Resultado */
     function showResult() {
       stopTimer();
       quizCard.classList.add('hidden');
@@ -916,9 +890,7 @@
       setTimeout(() => playerNameInput.focus(), 200);
     }
 
-    /* ============================
-       SALVAR RANKING
-       ============================ */
+    /* Salvar ranking */
     function saveRanking(name, pontos) {
       if (!name || !name.trim()) return { ok: false, reason: 'empty' };
       if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
@@ -963,9 +935,7 @@
       titleImg.style.display = 'block';
     });
 
-    /* ============================
-       RANKING: renderizar
-       ============================ */
+    /* Ranking: renderizar */
     function showRanking() {
       menuEl.style.display = 'none';
       quizCard.classList.add('hidden');
@@ -990,9 +960,7 @@
       menuEl.style.display = 'block';
     });
 
-    /* ============================
-       Teclado: atalhos 1-4, A-D, Enter
-       ============================ */
+    /* atalhos teclado */
     window.addEventListener('keydown', (e) => {
       if (!quizCard.classList.contains('hidden')) {
         const key = e.key.toLowerCase();
@@ -1010,9 +978,7 @@
       }
     });
 
-    /* ============================
-       Inicial UI
-       ============================ */
+    /* Inicial UI */
     menuEl.style.display = 'block';
     quizCard.classList.add('hidden');
     resultEl.classList.add('hidden');
