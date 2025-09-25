@@ -1,164 +1,459 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Quiz Interativo — Economia, Finanças e Investimentos</title>
-<style>
-  :root{
-    --bg-blue:#4da6ff;
-    --card-bg:#fff8e6;
-    --brown-border:#8a5a2b;
-    --stardew-brown:#c08943;
-    --accent:#7c3aed;
-    --accent2:#f59e0b;
-    --muted:#6b7280;
-    --text:#112;
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz Interativo — Economia, Finanças e Investimentos</title>
+  <style>
+    :root {
+      --bg-blue: #4da6ff;
+      --card-bg: #fff8e6;
+      --brown-border: #8a5a2b;
+      --stardew-brown: #c08943;
+      --accent: #7c3aed;
+      --accent2: #f59e0b;
+      --muted: #6b7280;
+      --text: #112;
+    }
 
-  html,body{height:100%;margin:0;padding:0;font-family:Inter, Arial, sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg-blue);overflow-x:hidden;color:var(--text);}
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: var(--bg-blue);
+      overflow-x: hidden;
+      color: var(--text);
+    }
 
-  /* Fundo (mantém sua configuração atual; assegure assets/tela_fundo.png existe) */
-  body {
-    background-image: url('assets/tela_fundo.png');
-    background-repeat: repeat-x;
-    background-size: auto 100%;
-    background-position: 0 0;
-    animation: moveBg 60s linear infinite;
-  }
-  @keyframes moveBg { from{background-position:0 0} to{background-position:-3000px 0} }
+    /* Fundo */
+    body {
+      background-image: url('assets/tela_fundo.png');
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      background-position: 0 0;
+      animation: moveBg 60s linear infinite;
+    }
 
-  .wrap{max-width:920px;margin:18px auto;padding:12px;display:flex;gap:16px;align-items:flex-start;justify-content:center;}
-  .card{background:var(--card-bg);border-radius:14px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,0.14);border:4px solid rgba(0,0,0,0.06);}
+    @keyframes moveBg {
+      from {
+        background-position: 0 0
+      }
 
-  /* Menu: painel marrom ajustado */
-  .stardew-menu{
-    width:320px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:12px;
-    padding:16px;
-    border:6px solid var(--brown-border);
-    background: linear-gradient(180deg, #f4d9a8, #eed7a2);
-    box-shadow: inset 0 -6px 0 rgba(0,0,0,0.06), 0 8px 20px rgba(0,0,0,0.12);
-    border-radius:16px;
-  }
-  .stardew-menu .title{width:92%;max-width:300px;display:block;margin:4px auto 8px;text-align:center;}
+      to {
+        background-position: -3000px 0
+      }
+    }
 
-  /* botões img menores sem quadrado branco */
-  .menu-img-btn{
-    display:block;
-    width:60%;
-    max-width:150px;
-    padding:0;
-    border-radius:8px;
-    overflow:hidden;
-    cursor:pointer;
-    background:transparent;
-    border:none;
-    box-shadow:0 6px 0 rgba(0,0,0,0.06);
-    transition:transform .12s ease;
-  }
-  .menu-img-btn img{width:100%;height:auto;display:block;pointer-events:none}
-  .menu-img-btn:active{transform:translateY(2px)}
-  .menu-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+    /* layout raiz */
+    .wrap {
+      max-width: 920px;
+      margin: 18px auto;
+      padding: 12px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-  .icon-btn{background:transparent;border:none;padding:6px;border-radius:10px;cursor:pointer}
-  .icon-btn img{width:34px;height:34px;display:block}
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+      border: 4px solid rgba(0, 0, 0, 0.06);
+    }
 
-  .quiz-card{flex:1;max-width:640px;min-width:260px;padding:16px;}
-  .mascote-wrap{display:flex;gap:12px;align-items:flex-start}
-  #mascote{width:120px;height:auto;display:block;animation:flut 3s ease-in-out infinite;border-radius:12px}
-  @keyframes flut{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    /* Menu: painel marrom — versão compacta e centralizada (ajustada) */
+    .stardew-menu {
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* <-- garante centralização vertical */
+      gap: 10px;
+      padding: 10px;
+      border: 4px solid var(--brown-border);
+      background: linear-gradient(180deg, #f4d9a8, #eed7a2);
+      box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      margin: 0 auto;
+      min-height: 120px;
+      /* garante espaço para centralizar verticalmente */
+      box-sizing: border-box;
+    }
 
-  /* balão que expande conforme o texto aparece */
-  .speech{
-    background:#fff;border:2px solid rgba(0,0,0,0.06);padding:10px;border-radius:10px;min-height:48px;width:100%;font-size:14px;line-height:1.25;box-shadow:0 6px 18px rgba(0,0,0,0.04);
-    overflow:hidden;
-    max-height:48px;
-    transition: max-height 240ms ease, padding 180ms ease;
-  }
+    /* removi a regra .stardew-menu .title porque não há título interno */
 
-  .top-row {display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-  #qCounter{font-weight:700}
-  #timer{font-weight:800;color:#d97706}
+    /* botões de imagem centralizados e mais compactos */
+    .stardew-menu .menu-img-btn {
+      display: block;
+      width: 78%;
+      /* ocupam 78% da largura do card */
+      max-width: 140px;
+      padding: 0;
+      margin: 6px auto;
+      /* centraliza horizontalmente */
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.06);
+      transition: transform .12s ease;
+    }
 
-  /* progresso: grid 6 colunas (6 x 2 linhas = 12) */
-  .progress{
-    display:grid;
-    grid-template-columns: repeat(6, 34px);
-    gap:8px;
-    justify-content:center;
-    margin:12px auto;
-  }
-  .coin{width:34px;height:34px;background-image:url('assets/moeda.png');background-size:cover;opacity:.28;transition:opacity .18s,transform .2s;}
-  .coin.active{opacity:1;transform:translateY(-6px)}
+    .stardew-menu .menu-img-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
+      pointer-events: none
+    }
 
-  .question-table{max-width:640px;margin:12px auto;text-align:center}
+    .stardew-menu .menu-img-btn:active {
+      transform: translateY(2px)
+    }
 
-  #question{font-weight:800;font-size:18px;margin:10px 0}
+    .menu-img-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
+      pointer-events: none
+    }
 
-  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;justify-items:center}
-  .option{background:#f3f4f6;padding:12px;border-radius:10px;border:2px solid transparent;cursor:pointer;text-align:left;font-size:15px;transition:transform .12s,box-shadow .12s;width:100%;max-width:340px}
-  .option:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(2,6,23,0.06)}
-  .option.correct{background:#16a34a;color:white;border-color:rgba(0,0,0,0.06);box-shadow:0 8px 26px rgba(0,0,0,0.08)}
-  .option.wrong{background:#dc2626;color:white;border-color:rgba(0,0,0,0.06)}
+    .menu-img-btn:active {
+      transform: translateY(2px)
+    }
 
-  #explainBox{display:none;margin-top:8px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;font-size:14px;text-align:left;overflow:hidden;max-height:0;transition:max-height 240ms ease,padding 180ms ease}
+    /* linha do ícone de som centralizada */
+    .menu-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 4px;
+    }
 
-  #streakIndicator{display:flex;gap:6px;align-items:center}
-  .st-star{width:20px;height:20px;background:rgba(0,0,0,0.06);border-radius:4px;transition:transform .12s,box-shadow .12s}
-  .st-star.active{background:linear-gradient(90deg,#ffd700,#ffb000);box-shadow:0 6px 18px rgba(255,160,0,0.15);transform:scale(1.06)}
+    .icon-btn {
+      background: transparent;
+      border: none;
+      padding: 6px;
+      border-radius: 10px;
+      cursor: pointer
+    }
 
-  .confete{position:fixed;width:10px;height:10px;border-radius:2px;z-index:9999;pointer-events:none;animation:fall 1700ms linear forwards}
-  @keyframes fall {0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(220px) rotate(720deg)}}
+    .icon-btn img {
+      width: 30px;
+      height: 30px;
+      display: block
+    }
 
-  #result, #ranking {width:100%;max-width:640px}
-  #medal img{width:120px;display:block;margin:12px auto}
+    /* quiz area */
+    .quiz-card {
+      flex: 1;
+      max-width: 640px;
+      min-width: 260px;
+      padding: 16px;
+    }
 
-  @media (max-width:980px){
-    .wrap{flex-direction:column;align-items:center;padding:8px}
-    .stardew-menu{width:92%}
-    .quiz-card{width:92%}
-    .mascote-wrap{flex-direction:column;align-items:center}
-    .speech{width:100%}
-    .options{grid-template-columns:1fr}
-    .progress{grid-template-columns:repeat(6,28px)}
-  }
-  @media (max-width:420px){
-    #mascote{width:90px}
-    .coin{width:28px;height:28px}
-    .st-star{width:16px;height:16px}
-    .speech{font-size:13px}
-  }
+    .mascote-wrap {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
 
-  .hidden{display:none}
-</style>
+    #mascote {
+      width: 120px;
+      height: auto;
+      display: block;
+      animation: flut 3s ease-in-out infinite;
+      border-radius: 12px
+    }
+
+    @keyframes flut {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-10px)
+      }
+    }
+
+    /* balão que expande conforme o texto aparece */
+    .speech {
+      background: #fff;
+      border: 2px solid rgba(0, 0, 0, 0.06);
+      padding: 10px;
+      border-radius: 10px;
+      min-height: 48px;
+      width: 100%;
+      font-size: 14px;
+      line-height: 1.25;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      max-height: 48px;
+      transition: max-height 240ms ease, padding 180ms ease;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px
+    }
+
+    #qCounter {
+      font-weight: 700
+    }
+
+    #timer {
+      font-weight: 800;
+      color: #d97706
+    }
+
+    /* progresso: grid 6 colunas (6 x 2 linhas = 12) */
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(6, 34px);
+      gap: 8px;
+      justify-content: center;
+      margin: 12px auto;
+    }
+
+    .coin {
+      width: 34px;
+      height: 34px;
+      background-image: url('assets/moeda.png');
+      background-size: cover;
+      opacity: .28;
+      transition: opacity .18s, transform .2s;
+    }
+
+    .coin.active {
+      opacity: 1;
+      transform: translateY(-6px)
+    }
+
+    .question-table {
+      max-width: 640px;
+      margin: 12px auto;
+      text-align: center
+    }
+
+    #question {
+      font-weight: 800;
+      font-size: 18px;
+      margin: 10px 0
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      justify-items: center
+    }
+
+    .option {
+      background: #f3f4f6;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      text-align: left;
+      font-size: 15px;
+      transition: transform .12s, box-shadow .12s;
+      width: 100%;
+      max-width: 340px
+    }
+
+    .option:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.06)
+    }
+
+    .option.correct {
+      background: #16a34a;
+      color: white;
+      border-color: rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08)
+    }
+
+    .option.wrong {
+      background: #dc2626;
+      color: white;
+      border-color: rgba(0, 0, 0, 0.06)
+    }
+
+    #explainBox {
+      display: none;
+      margin-top: 8px;
+      background: rgba(0, 0, 0, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: left;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 240ms ease, padding 180ms ease
+    }
+
+    #streakIndicator {
+      display: flex;
+      gap: 6px;
+      align-items: center
+    }
+
+    .st-star {
+      width: 20px;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      transition: transform .12s, box-shadow .12s
+    }
+
+    .st-star.active {
+      background: linear-gradient(90deg, #ffd700, #ffb000);
+      box-shadow: 0 6px 18px rgba(255, 160, 0, 0.15);
+      transform: scale(1.06)
+    }
+
+    .confete {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      z-index: 9999;
+      pointer-events: none;
+      animation: fall 1700ms linear forwards
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 1;
+        transform: translateY(-20px) rotate(0deg)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(220px) rotate(720deg)
+      }
+    }
+
+    #result,
+    #ranking {
+      width: 100%;
+      max-width: 640px
+    }
+
+    #medal img {
+      width: 120px;
+      display: block;
+      margin: 12px auto
+    }
+
+    /* responsividade */
+    @media (max-width:980px) {
+      .wrap {
+        flex-direction: column;
+        align-items: center;
+        padding: 8px
+      }
+
+      .stardew-menu {
+        width: 92%;
+        max-width: 320px
+      }
+
+      .quiz-card {
+        width: 92%
+      }
+
+      .mascote-wrap {
+        flex-direction: column;
+        align-items: center
+      }
+
+      .speech {
+        width: 100%
+      }
+
+      .options {
+        grid-template-columns: 1fr
+      }
+
+      .progress {
+        grid-template-columns: repeat(6, 28px)
+      }
+
+      .menu-img-btn {
+        max-width: 160px
+      }
+    }
+
+    @media (max-width:420px) {
+      #mascote {
+        width: 90px
+      }
+
+      .coin {
+        width: 28px;
+        height: 28px
+      }
+
+      .st-star {
+        width: 16px;
+        height: 16px
+      }
+
+      .speech {
+        font-size: 13px
+      }
+
+      .menu-img-btn {
+        max-width: 140px
+      }
+    }
+
+    .hidden {
+      display: none
+    }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
-    <!-- título -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <img id="titleImg" src="assets/titulo.png" alt="Título" style="width:360px;max-width:86%;display:block;margin-bottom:6px">
+    <!-- título (fora da caixa marrom) -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
+      <img id="titleImg" src="assets/titulo.png" alt="Título"
+        style="width:360px;max-width:86%;display:block;margin:6px auto 10px">
     </div>
 
-    <!-- MENU -->
+    <!-- MENU (caixa marrom reduzida; sem título interno) -->
     <div id="menu" class="card stardew-menu" aria-label="Menu principal">
-      <img class="title" src="assets/titulo.png" alt="Título do Quiz" style="max-width:72%;pointer-events:none">
       <button id="imgPlay" class="menu-img-btn" aria-label="Jogar">
         <img src="assets/jogar.png" alt="Jogar">
       </button>
+
       <button id="imgRanking" class="menu-img-btn" aria-label="Ranking">
         <img src="assets/ranking.png" alt="Ranking">
       </button>
-      <div class="menu-row" style="justify-content:center;">
+
+      <div class="menu-row">
         <button id="soundBtn" class="icon-btn" aria-label="Som">
           <img id="soundIcon" src="assets/som_ligado.png" alt="Som ligado">
         </button>
       </div>
-      <!-- OBS: removi o texto "clique em jogar..." conforme pedido -->
     </div>
+
 
     <!-- QUIZ -->
     <div id="quizCard" class="card quiz-card hidden" role="application" aria-live="polite">
@@ -178,12 +473,21 @@
         <div id="question">Pergunta aparecerá aqui</div>
         <div class="options" id="options" role="list"></div>
 
-        <div id="explainBox" aria-hidden="true"><div id="explainText"></div><div style="text-align:right;margin-top:8px"><button id="closeExplainBtn" class="btn btn-ghost">Fechar</button></div></div>
+        <div id="explainBox" aria-hidden="true">
+          <div id="explainText"></div>
+          <div style="text-align:right;margin-top:8px"><button id="closeExplainBtn"
+              class="btn btn-ghost">Fechar</button></div>
+        </div>
 
-        <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div
+          style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
           <div id="score" style="font-weight:700">Pontuação: 0 | Multiplicador: x1.00</div>
           <div style="display:flex;gap:8px;align-items:center">
-            <div id="streakIndicator"><div class="st-star" data-i="1"></div><div class="st-star" data-i="2"></div><div class="st-star" data-i="3"></div></div>
+            <div id="streakIndicator">
+              <div class="st-star" data-i="1"></div>
+              <div class="st-star" data-i="2"></div>
+              <div class="st-star" data-i="3"></div>
+            </div>
             <button id="showExplainBtn" class="btn btn-ghost" style="display:none">Explicação</button>
             <button id="nextBtn" class="btn btn-primary" disabled>Próxima</button>
           </div>
@@ -197,7 +501,8 @@
       <p id="finalScore">Sua pontuação final: 0 pontos</p>
       <div id="medal"></div>
       <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-        <input type="text" id="playerName" placeholder="Digite seu nome (2-20 chars)" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc">
+        <input type="text" id="playerName" placeholder="Digite seu nome (2-20 chars)"
+          style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc">
         <button id="saveScoreBtn" class="btn btn-primary">Salvar</button>
       </div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
@@ -211,510 +516,512 @@
     <div id="ranking" class="card hidden" aria-live="polite">
       <h2>Ranking (Top 10)</h2>
       <ul id="rankingList" style="list-style:none;padding:0;margin:0"></ul>
-      <div style="margin-top:12px;display:flex;gap:8px"><button id="backBtn" class="btn btn-primary">Voltar</button></div>
+      <div style="margin-top:12px;display:flex;gap:8px"><button id="backBtn" class="btn btn-primary">Voltar</button>
+      </div>
     </div>
   </div>
 
   <script>
-/* ============================
-   PRELOAD IMAGENS e SONS
-   ============================ */
-const preloadImages = [
-  'assets/tela_fundo.png','assets/titulo.png','assets/mascote.png','assets/moeda.png',
-  'assets/medal_gold.png','assets/medal_silver.png','assets/medal_bronze.png',
-  'assets/jogar.png','assets/ranking.png','assets/som_ligado.png','assets/som_desligado.png'
-];
-preloadImages.forEach(s => { const i = new Image(); i.src = s; });
+    /* ============================
+       PRELOAD IMAGENS e SONS
+       ============================ */
+    const preloadImages = [
+      'assets/tela_fundo.png', 'assets/titulo.png', 'assets/mascote.png', 'assets/moeda.png',
+      'assets/medal_gold.png', 'assets/medal_silver.png', 'assets/medal_bronze.png',
+      'assets/jogar.png', 'assets/ranking.png', 'assets/som_ligado.png', 'assets/som_desligado.png'
+    ];
+    preloadImages.forEach(s => { const i = new Image(); i.src = s; });
 
-function loadAudio(src, volume = 1.0, loop = false) {
-  const a = new Audio(src);
-  a.preload = 'auto';
-  a.volume = volume;
-  a.loop = loop;
-  try { a.load(); } catch(e){}
-  return a;
-}
-
-// SONS
-const correctSound = loadAudio('assets/acerto.mp3', 0.9, false);
-const wrongSound   = loadAudio('assets/erro.mp3', 1.0, false);
-const nextSound    = loadAudio('assets/next.mp3', 0.85, false);
-const winSound     = loadAudio('assets/parabens.mp3', 0.9, false);
-const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
-const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
-const clickSound = loadAudio('assets/click.mp3', 0.6, false);
-const explainOpenSound = loadAudio('assets/explain_open.mp3', 0.6, false);
-const ambientSound = loadAudio('assets/ambiente.mp3', 0.28, true);
-
-let soundEnabled = true;
-function playSound(soundObj) {
-  if (!soundEnabled || !soundObj) return;
-  try { soundObj.currentTime = 0; const p = soundObj.play(); if (p && p.catch) p.catch(()=>{}); } catch(e){}
-}
-function startAmbient(){ if (soundEnabled) try { ambientSound.currentTime = 0; ambientSound.play().catch(()=>{}); } catch(e){} }
-function stopAmbient(){ try { ambientSound.pause(); ambientSound.currentTime = 0; } catch(e){} }
-
-function tryUnlockAudio() {
-  try {
-    if (!window.__audioCtx) {
-      const C = window.AudioContext || window.webkitAudioContext;
-      if (C) { window.__audioCtx = new C(); window.__audioCtx.resume().catch(()=>{}); }
-    } else { window.__audioCtx.resume && window.__audioCtx.resume().catch(()=>{}); }
-  } catch(e){}
-  startAmbient();
-}
-document.body.addEventListener('click', tryUnlockAudio, { once:true });
-
-/* ============================
-   Banco de perguntas e config (novo banco fornecido)
-   ============================ */
-const questionBank = [
-  { question: "O que significa a sigla PIB?", options:["Produto Interno Bruto","Produto Interno Brasileiro","Patrimônio de Influenciadores","Produto de Investimento"], correctIndex:0, explain:"PIB é a soma de todos os bens e serviços finais produzidos em um país." },
-  { question: "Qual a função do Banco Central?", options:["Garantir pagamentos","Investir em startups","Fiscalizar políticos","Regular juros"], correctIndex:3, explain:"O BC controla a inflação e garante a estabilidade da moeda." },
-  { question: "O que é inflação?", options:["Valorização de criptomoeda","Alta de preços","Reforma política","Abertura de capital"], correctIndex:1, explain:"Inflação é o aumento contínuo e generalizado dos preços." },
-  { question: "O que é investimento?", options:["Comprar roupas","Aplicar dinheiro","Gasto público","Transferir dinheiro"], correctIndex:1, explain:"Investir é aplicar recursos esperando retorno futuro." },
-  { question: "Para que serve uma reserva de emergência?", options:["Comprar NFTs","Comprar ações","Cobrir imprevistos","Campanha política"], correctIndex:2, explain:"Reserva protege contra despesas inesperadas sem endividamento." },
-  { question: "O que é capital de giro?", options:["Dinheiro de youtubers","Despesas operacionais","Receita total","Dívida com fornecedores"], correctIndex:1, explain:"Capital de giro financia as operações do dia a dia da empresa." },
-  { question: "Diferença entre receita e lucro?", options:["Gasto do governo","Receita entra, lucro sobra","Lucro pago a influenciadores","Não há diferença"], correctIndex:1, explain:"Receita é o total recebido; lucro é o que sobra após custos." },
-  { question: "Objetivo da política fiscal expansionista?", options:["Aumentar impostos","Reduzir poder de compra","Aumentar gastos/reduzir impostos","Diminuir partidos"], correctIndex:2, explain:"Busca estimular a economia com mais gastos ou menos impostos." },
-  { question: "Relação entre juros e inflação?", options:["Juros altos combatem inflação","Juros altos aumentam inflação","Juros baixos combatem inflação","Sem relação"], correctIndex:0, explain:"Taxas mais altas reduzem consumo e ajudam a controlar preços." },
-  { question: "O que é modelo de negócios?", options:["Criar e entregar valor","Plano político","Orçamento da Netflix","Lista de produtos"], correctIndex:0, explain:"Define como a empresa gera valor e se mantém viável." },
-  { question: "O que é diversificação?", options:["Ação de ex-ministro","Comprar só 1 ativo","Nova sede","Espalhar investimentos"], correctIndex:3, explain:"Diversificar reduz riscos ao investir em ativos diferentes." },
-  { question: "O que é empreendedorismo social?", options:["Lucrar","Postar em redes","Resolver problema social","Iniciativa do governo"], correctIndex:2, explain:"Empreender com foco em impacto social ou ambiental." },
-  { question: "O que é um ativo?", options:["Conta de luz","Bem convertível em dinheiro","Nova lei","Renda de youtuber"], correctIndex:1, explain:"Ativos são bens ou direitos com valor econômico futuro." },
-  { question: "O que é fluxo de caixa?", options:["Entradas e saídas de dinheiro","Diferença da Receita Federal","Qtd. de produtos vendidos","Valor total de dívidas"], correctIndex:0, explain:"Mostra entradas e saídas financeiras de um período." },
-  { question: "O que é crowdfunding?", options:["Aposta","Doação de youtuber","Financiamento coletivo","Venda de ações"], correctIndex:2, explain:"Forma de financiar projetos com várias pessoas apoiando." },
-  { question: "O que é juro composto?", options:["Juro sobre capital inicial","Taxa de banco","Juro sobre capital e juros","Juro do BC"], correctIndex:2, explain:"É o 'juro sobre juro', que gera crescimento exponencial." },
-  { question: "Diferença entre ativo e passivo?", options:["Ativo de político, passivo dívida","Ativo põe dinheiro, passivo tira","Ativo compra, passivo vende","Não há diferença"], correctIndex:1, explain:"Ativo gera renda; passivo são dívidas/obrigações." },
-  { question: "Para que serve orçamento pessoal?", options:["Gastar sem controle","Planejar gastos","Campanha de youtuber","Estimativa presidencial"], correctIndex:1, explain:"Ajuda a controlar despesas e alcançar objetivos financeiros." },
-  { question: "Empreendedorismo por necessidade?", options:["Atender mercado","Produtos digitais","Defendido por político","Abrir por falta de emprego"], correctIndex:3, explain:"Motivado pela falta de emprego, não por oportunidade." },
-  { question: "O que é marketing digital?", options:["Criar podcasts","Ações na internet","Promoção política","Venda em loja"], correctIndex:1, explain:"Conjunto de ações online para atrair e fidelizar clientes." },
-  { question: "O que é renda fixa?", options:["Risco zero","Rentabilidade previsível","Só fundos","Investimento de político"], correctIndex:1, explain:"Rentabilidade definida ou pré-calculada, como títulos públicos." },
-  { question: "O que é empreendedorismo feminino?", options:["Equipe só de mulheres","Negócio p/ público feminino","Mulheres que gerenciam","Ação de influencer"], correctIndex:2, explain:"Empresas criadas e lideradas por mulheres." },
-  { question: "O que é marketing de conteúdo?", options:["Conteúdo político","Atrair e engajar público","Compra de anúncios","Blog de youtuber"], correctIndex:1, explain:"Produzir conteúdo relevante para atrair clientes." },
-  { question: "O que é endividamento?", options:["Pegar empréstimo","Pagar contas em dia","Despesas maiores que receitas","Aumento do salário mínimo"], correctIndex:2, explain:"Ocorre quando obrigações superam a capacidade de pagamento." },
-  { question: "O que é uma startup?", options:["Artesanato local","Música de youtuber","Série de tecnologia","Empresa escalável"], correctIndex:3, explain:"Negócio inovador com potencial de rápido crescimento." },
-  { question: "O que é imposto de renda?", options:["Imposto sobre videogames","Imposto sobre importados","Imposto municipal","Imposto sobre renda"], correctIndex:3, explain:"Tributo cobrado sobre a renda de pessoas e empresas." },
-  { question: "O que é empreendedorismo digital?", options:["Canal no YouTube","Político em redes","Negócio na internet","Loja de rua"], correctIndex:2, explain:"Usa a internet e tecnologia como base do negócio." },
-  { question: "O que é microcrédito?", options:["Empréstimo pequeno","Grandes empresas","R$1 milhão","Taxa do BC"], correctIndex:0, explain:"Crédito de pequeno valor para microempreendedores." },
-  { question: "O que é risco em investimentos?", options:["Possibilidade de perder dinheiro","Investimento do BC","Lucro garantido","Imposto"], correctIndex:0, explain:"Quanto maior o retorno potencial, maior o risco." },
-  { question: "O que é taxa Selic?", options:["Privatizar estatais","Taxa básica de juros","Juros de bancos","Valor pago a youtubers"], correctIndex:1, explain:"É a taxa básica de juros que orienta o crédito no país." }
-];
-
-const quizSize = 12;
-
-/* ============================
-   DOM refs
-   ============================ */
-const imgPlay = document.getElementById('imgPlay');
-const imgRanking = document.getElementById('imgRanking');
-const soundBtn = document.getElementById('soundBtn');
-const soundIcon = document.getElementById('soundIcon');
-const menuEl = document.getElementById('menu');
-const quizCard = document.getElementById('quizCard');
-const resultEl = document.getElementById('result');
-const rankingEl = document.getElementById('ranking');
-
-const speechEl = document.getElementById('speech');
-const qCounterEl = document.getElementById('qCounter');
-const timerEl = document.getElementById('timer');
-const progressBar = document.getElementById('progressBar');
-const questionEl = document.getElementById('question');
-const optionsEl = document.getElementById('options');
-const scoreEl = document.getElementById('score');
-const nextBtn = document.getElementById('nextBtn');
-const showExplainBtn = document.getElementById('showExplainBtn');
-const explainBox = document.getElementById('explainBox');
-const explainText = document.getElementById('explainText');
-const closeExplainBtn = document.getElementById('closeExplainBtn');
-const playerNameInput = document.getElementById('playerName');
-const saveScoreBtn = document.getElementById('saveScoreBtn');
-const finalScoreText = document.getElementById('finalScore');
-const medalDiv = document.getElementById('medal');
-const replayBtn = document.getElementById('replayBtn');
-const viewRankingBtn = document.getElementById('viewRankingBtn');
-const rankingList = document.getElementById('rankingList');
-const backBtn = document.getElementById('backBtn');
-const mascoteEl = document.getElementById('mascote');
-const titleImg = document.getElementById('titleImg');
-const backToMenuBtn = document.getElementById('backToMenuBtn');
-
-/* ============================
-   Estado do jogo
-   ============================ */
-let quizData = [];
-let currentQuestion = 0;
-let score = 0;
-let answeredCount = 0;
-let multiplier = 1;
-let streak = 0;
-let timeLeft = 20;
-let timerHandle = null;
-let typingHandle = null;
-let correctCount = 0;
-
-/* ============================
-   Funções utilitárias
-   ============================ */
-function shuffleArrayFisherYates(array){
-  const a = array.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-function generateQuiz(){
-  const copy = shuffleArrayFisherYates(questionBank);
-  return copy.slice(0, quizSize);
-}
-function updateProgress(){
-  // cria grid 6xN (com 12 elementos se quizSize=12)
-  progressBar.innerHTML = '';
-  const total = quizData.length || quizSize;
-  for (let i=0;i<total;i++){
-    const d = document.createElement('div'); d.className = 'coin';
-    if (i < answeredCount) d.classList.add('active');
-    progressBar.appendChild(d);
-  }
-}
-function updateScoreDisplay(){ scoreEl.textContent = `Pontuação: ${score} | Multiplicador: x${multiplier.toFixed(2)}`; }
-
-/* typing + expand speech */
-function typeSpeech(text, onDone){
-  // expand speech smoothly
-  speechEl.style.maxHeight = '300px';
-  speechEl.style.padding = '10px';
-  stopTyping();
-  speechEl.textContent = '';
-  let i = 0;
-  typingHandle = setInterval(()=> {
-    speechEl.textContent += text.charAt(i) || '';
-    i++;
-    if (i > text.length){
-      clearInterval(typingHandle);
-      typingHandle = null;
-      if (typeof onDone === 'function') onDone();
+    function loadAudio(src, volume = 1.0, loop = false) {
+      const a = new Audio(src);
+      a.preload = 'auto';
+      a.volume = volume;
+      a.loop = loop;
+      try { a.load(); } catch (e) { }
+      return a;
     }
-  }, 24);
-}
-function stopTyping(){ if (typingHandle) { clearInterval(typingHandle); typingHandle = null; } }
 
-/* explain open/close with smooth expand */
-function openExplainBox(){
-  explainBox.style.display = 'block';
-  // small delay to allow display:block then animate
-  requestAnimationFrame(()=> {
-    explainBox.style.maxHeight = '400px';
-    explainBox.style.padding = '10px';
-  });
-  playSound(explainOpenSound);
-}
-function closeExplainBox(){
-  explainBox.style.maxHeight = '0';
-  explainBox.style.padding = '0 10px';
-  // after transition hide
-  setTimeout(()=> { explainBox.style.display = 'none'; }, 260);
-}
+    // SONS
+    const correctSound = loadAudio('assets/acerto.mp3', 0.9, false);
+    const wrongSound = loadAudio('assets/erro.mp3', 1.0, false);
+    const nextSound = loadAudio('assets/next.mp3', 0.85, false);
+    const winSound = loadAudio('assets/parabens.mp3', 0.9, false);
+    const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
+    const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
+    const clickSound = loadAudio('assets/click.mp3', 0.6, false);
+    const explainOpenSound = loadAudio('assets/explain_open.mp3', 0.6, false);
+    const ambientSound = loadAudio('assets/ambiente.mp3', 0.28, true);
 
-/* confetti */
-function showConfetti(){
-  for (let i=0;i<18;i++){
-    const c = document.createElement('div');
-    c.className = 'confete';
-    c.style.left = (window.innerWidth/2 + (Math.random()*260 - 130)) + 'px';
-    c.style.top = (80 + Math.random()*40) + 'px';
-    c.style.background = ['#ff0','#f0a','#0ff','#0f0','#f90'][Math.floor(Math.random()*5)];
-    document.body.appendChild(c);
-    setTimeout(()=> c.remove(), 1800);
-  }
-}
-function updateStreakIndicator(){
-  const stars = Array.from(document.querySelectorAll('.st-star'));
-  let lit = streak % 3;
-  if (streak > 0 && lit === 0) lit = 3;
-  stars.forEach((s, idx) => { if (idx < lit) s.classList.add('active'); else s.classList.remove('active'); });
-}
+    let soundEnabled = true;
+    function playSound(soundObj) {
+      if (!soundEnabled || !soundObj) return;
+      try { soundObj.currentTime = 0; const p = soundObj.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { }
+    }
+    function startAmbient() { if (soundEnabled) try { ambientSound.currentTime = 0; ambientSound.play().catch(() => { }); } catch (e) { } }
+    function stopAmbient() { try { ambientSound.pause(); ambientSound.currentTime = 0; } catch (e) { } }
 
-/* ============================
-   MENU interactions
-   ============================ */
-imgPlay.addEventListener('click', () => { playSound(clickSound); tryUnlockAudio(); startGame(); });
-imgRanking.addEventListener('click', () => { playSound(clickSound); showRanking(); });
-soundBtn.addEventListener('click', () => {
-  soundEnabled = !soundEnabled;
-  soundIcon.src = soundEnabled ? 'assets/som_ligado.png' : 'assets/som_desligado.png';
-  if (soundEnabled) startAmbient(); else stopAmbient();
-  playSound(clickSound);
-});
+    function tryUnlockAudio() {
+      try {
+        if (!window.__audioCtx) {
+          const C = window.AudioContext || window.webkitAudioContext;
+          if (C) { window.__audioCtx = new C(); window.__audioCtx.resume().catch(() => { }); }
+        } else { window.__audioCtx.resume && window.__audioCtx.resume().catch(() => { }); }
+      } catch (e) { }
+      startAmbient();
+    }
+    document.body.addEventListener('click', tryUnlockAudio, { once: true });
 
-/* ============================
-   JOGO: iniciar/carregar pergunta
-   ============================ */
-function startGame(){
-  titleImg.style.display = 'none';
-  menuEl.style.display = 'none';
-  rankingEl.classList.add('hidden');
-  resultEl.classList.add('hidden');
-  quizCard.classList.remove('hidden');
-  document.body.classList.add('quiz-active');
+    /* ============================
+       Banco de perguntas e config (novo banco fornecido)
+       ============================ */
+    const questionBank = [
+      { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento"], correctIndex: 0, explain: "PIB é a soma de todos os bens e serviços finais produzidos em um país." },
+      { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos", "Investir em startups", "Fiscalizar políticos", "Regular juros"], correctIndex: 3, explain: "O BC controla a inflação e garante a estabilidade da moeda." },
+      { question: "O que é inflação?", options: ["Valorização de criptomoeda", "Alta de preços", "Reforma política", "Abertura de capital"], correctIndex: 1, explain: "Inflação é o aumento contínuo e generalizado dos preços." },
+      { question: "O que é investimento?", options: ["Comprar roupas", "Aplicar dinheiro", "Gasto público", "Transferir dinheiro"], correctIndex: 1, explain: "Investir é aplicar recursos esperando retorno futuro." },
+      { question: "Para que serve uma reserva de emergência?", options: ["Comprar NFTs", "Comprar ações", "Cobrir imprevistos", "Campanha política"], correctIndex: 2, explain: "Reserva protege contra despesas inesperadas sem endividamento." },
+      { question: "O que é capital de giro?", options: ["Dinheiro de youtubers", "Despesas operacionais", "Receita total", "Dívida com fornecedores"], correctIndex: 1, explain: "Capital de giro financia as operações do dia a dia da empresa." },
+      { question: "Diferença entre receita e lucro?", options: ["Gasto do governo", "Receita entra, lucro sobra", "Lucro pago a influenciadores", "Não há diferença"], correctIndex: 1, explain: "Receita é o total recebido; lucro é o que sobra após custos." },
+      { question: "Objetivo da política fiscal expansionista?", options: ["Aumentar impostos", "Reduzir poder de compra", "Aumentar gastos/reduzir impostos", "Diminuir partidos"], correctIndex: 2, explain: "Busca estimular a economia com mais gastos ou menos impostos." },
+      { question: "Relação entre juros e inflação?", options: ["Juros altos combatem inflação", "Juros altos aumentam inflação", "Juros baixos combatem inflação", "Sem relação"], correctIndex: 0, explain: "Taxas mais altas reduzem consumo e ajudam a controlar preços." },
+      { question: "O que é modelo de negócios?", options: ["Criar e entregar valor", "Plano político", "Orçamento da Netflix", "Lista de produtos"], correctIndex: 0, explain: "Define como a empresa gera valor e se mantém viável." },
+      { question: "O que é diversificação?", options: ["Ação de ex-ministro", "Comprar só 1 ativo", "Nova sede", "Espalhar investimentos"], correctIndex: 3, explain: "Diversificar reduz riscos ao investir em ativos diferentes." },
+      { question: "O que é empreendedorismo social?", options: ["Lucrar", "Postar em redes", "Resolver problema social", "Iniciativa do governo"], correctIndex: 2, explain: "Empreender com foco em impacto social ou ambiental." },
+      { question: "O que é um ativo?", options: ["Conta de luz", "Bem convertível em dinheiro", "Nova lei", "Renda de youtuber"], correctIndex: 1, explain: "Ativos são bens ou direitos com valor econômico futuro." },
+      { question: "O que é fluxo de caixa?", options: ["Entradas e saídas de dinheiro", "Diferença da Receita Federal", "Qtd. de produtos vendidos", "Valor total de dívidas"], correctIndex: 0, explain: "Mostra entradas e saídas financeiras de um período." },
+      { question: "O que é crowdfunding?", options: ["Aposta", "Doação de youtuber", "Financiamento coletivo", "Venda de ações"], correctIndex: 2, explain: "Forma de financiar projetos com várias pessoas apoiando." },
+      { question: "O que é juro composto?", options: ["Juro sobre capital inicial", "Taxa de banco", "Juro sobre capital e juros", "Juro do BC"], correctIndex: 2, explain: "É o 'juro sobre juro', que gera crescimento exponencial." },
+      { question: "Diferença entre ativo e passivo?", options: ["Ativo de político, passivo dívida", "Ativo põe dinheiro, passivo tira", "Ativo compra, passivo vende", "Não há diferença"], correctIndex: 1, explain: "Ativo gera renda; passivo são dívidas/obrigações." },
+      { question: "Para que serve orçamento pessoal?", options: ["Gastar sem controle", "Planejar gastos", "Campanha de youtuber", "Estimativa presidencial"], correctIndex: 1, explain: "Ajuda a controlar despesas e alcançar objetivos financeiros." },
+      { question: "Empreendedorismo por necessidade?", options: ["Atender mercado", "Produtos digitais", "Defendido por político", "Abrir por falta de emprego"], correctIndex: 3, explain: "Motivado pela falta de emprego, não por oportunidade." },
+      { question: "O que é marketing digital?", options: ["Criar podcasts", "Ações na internet", "Promoção política", "Venda em loja"], correctIndex: 1, explain: "Conjunto de ações online para atrair e fidelizar clientes." },
+      { question: "O que é renda fixa?", options: ["Risco zero", "Rentabilidade previsível", "Só fundos", "Investimento de político"], correctIndex: 1, explain: "Rentabilidade definida ou pré-calculada, como títulos públicos." },
+      { question: "O que é empreendedorismo feminino?", options: ["Equipe só de mulheres", "Negócio p/ público feminino", "Mulheres que gerenciam", "Ação de influencer"], correctIndex: 2, explain: "Empresas criadas e lideradas por mulheres." },
+      { question: "O que é marketing de conteúdo?", options: ["Conteúdo político", "Atrair e engajar público", "Compra de anúncios", "Blog de youtuber"], correctIndex: 1, explain: "Produzir conteúdo relevante para atrair clientes." },
+      { question: "O que é endividamento?", options: ["Pegar empréstimo", "Pagar contas em dia", "Despesas maiores que receitas", "Aumento do salário mínimo"], correctIndex: 2, explain: "Ocorre quando obrigações superam a capacidade de pagamento." },
+      { question: "O que é uma startup?", options: ["Artesanato local", "Música de youtuber", "Série de tecnologia", "Empresa escalável"], correctIndex: 3, explain: "Negócio inovador com potencial de rápido crescimento." },
+      { question: "O que é imposto de renda?", options: ["Imposto sobre videogames", "Imposto sobre importados", "Imposto municipal", "Imposto sobre renda"], correctIndex: 3, explain: "Tributo cobrado sobre a renda de pessoas e empresas." },
+      { question: "O que é empreendedorismo digital?", options: ["Canal no YouTube", "Político em redes", "Negócio na internet", "Loja de rua"], correctIndex: 2, explain: "Usa a internet e tecnologia como base do negócio." },
+      { question: "O que é microcrédito?", options: ["Empréstimo pequeno", "Grandes empresas", "R$1 milhão", "Taxa do BC"], correctIndex: 0, explain: "Crédito de pequeno valor para microempreendedores." },
+      { question: "O que é risco em investimentos?", options: ["Possibilidade de perder dinheiro", "Investimento do BC", "Lucro garantido", "Imposto"], correctIndex: 0, explain: "Quanto maior o retorno potencial, maior o risco." },
+      { question: "O que é taxa Selic?", options: ["Privatizar estatais", "Taxa básica de juros", "Juros de bancos", "Valor pago a youtubers"], correctIndex: 1, explain: "É a taxa básica de juros que orienta o crédito no país." }
+    ];
 
-  quizData = generateQuiz();
-  currentQuestion = 0; score = 0; answeredCount = 0; multiplier = 1; streak = 0; correctCount = 0;
-  updateScoreDisplay(); updateProgress(); updateStreakIndicator();
-  loadQuestion();
-}
-function loadQuestion(){
-  clearInterval(timerHandle);
-  stopTyping();
+    const quizSize = 12;
 
-  timeLeft = 20; timerEl.textContent = `Tempo: ${timeLeft}s`;
-  nextBtn.disabled = true;
-  showExplainBtn.style.display = 'none';
-  closeExplainBox(); explainText.textContent = '';
+    /* ============================
+       DOM refs
+       ============================ */
+    const imgPlay = document.getElementById('imgPlay');
+    const imgRanking = document.getElementById('imgRanking');
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const menuEl = document.getElementById('menu');
+    const quizCard = document.getElementById('quizCard');
+    const resultEl = document.getElementById('result');
+    const rankingEl = document.getElementById('ranking');
 
-  const q = quizData[currentQuestion];
-  qCounterEl.textContent = `Questão ${currentQuestion+1} / ${quizData.length}`;
-  // question text is shown in speech balloon via mascote
-  // options area shows choices (questionEl kept for clarity)
-  questionEl.textContent = '';
-  optionsEl.innerHTML = '';
+    const speechEl = document.getElementById('speech');
+    const qCounterEl = document.getElementById('qCounter');
+    const timerEl = document.getElementById('timer');
+    const progressBar = document.getElementById('progressBar');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('nextBtn');
+    const showExplainBtn = document.getElementById('showExplainBtn');
+    const explainBox = document.getElementById('explainBox');
+    const explainText = document.getElementById('explainText');
+    const closeExplainBtn = document.getElementById('closeExplainBtn');
+    const playerNameInput = document.getElementById('playerName');
+    const saveScoreBtn = document.getElementById('saveScoreBtn');
+    const finalScoreText = document.getElementById('finalScore');
+    const medalDiv = document.getElementById('medal');
+    const replayBtn = document.getElementById('replayBtn');
+    const viewRankingBtn = document.getElementById('viewRankingBtn');
+    const rankingList = document.getElementById('rankingList');
+    const backBtn = document.getElementById('backBtn');
+    const mascoteEl = document.getElementById('mascote');
+    const titleImg = document.getElementById('titleImg');
+    const backToMenuBtn = document.getElementById('backToMenuBtn');
 
-  const idx = shuffleArrayFisherYates([0,1,2,3]);
-  idx.forEach(origIndex => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.type = 'button';
-    btn.textContent = q.options[origIndex];
-    btn.dataset.orig = origIndex;
-    btn.addEventListener('click', () => selectAnswer(origIndex, q.correctIndex));
-    optionsEl.appendChild(btn);
-  });
+    /* ============================
+       Estado do jogo
+       ============================ */
+    let quizData = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let answeredCount = 0;
+    let multiplier = 1;
+    let streak = 0;
+    let timeLeft = 20;
+    let timerHandle = null;
+    let typingHandle = null;
+    let correctCount = 0;
 
-  // Mascote fala (typing) - show question in speech balloon, timer starts after typing
-  typeSpeech(q.question, () => {
-    // when typing done, also set questionEl for screen readers / visibility
-    questionEl.textContent = q.question;
-    startTimer();
-    const firstBtn = optionsEl.querySelector('.option'); if (firstBtn) firstBtn.focus();
-  });
-}
+    /* ============================
+       Funções utilitárias
+       ============================ */
+    function shuffleArrayFisherYates(array) {
+      const a = array.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    function generateQuiz() {
+      const copy = shuffleArrayFisherYates(questionBank);
+      return copy.slice(0, quizSize);
+    }
+    function updateProgress() {
+      // cria grid 6xN (com 12 elementos se quizSize=12)
+      progressBar.innerHTML = '';
+      const total = quizData.length || quizSize;
+      for (let i = 0; i < total; i++) {
+        const d = document.createElement('div'); d.className = 'coin';
+        if (i < answeredCount) d.classList.add('active');
+        progressBar.appendChild(d);
+      }
+    }
+    function updateScoreDisplay() { scoreEl.textContent = `Pontuação: ${score} | Multiplicador: x${multiplier.toFixed(2)}`; }
 
-/* ============================
-   TIMER
-   ============================ */
-function startTimer(){
-  clearInterval(timerHandle);
-  const total = 20; let elapsed = 0;
-  if (progressBar.querySelectorAll('.coin').length === 0) updateProgress();
-  timerHandle = setInterval(() => {
-    elapsed += 1;
-    timeLeft = total - elapsed;
-    if (timeLeft < 0) timeLeft = 0;
-    timerEl.textContent = `Tempo: ${timeLeft}s`;
-    if (elapsed >= total) {
+    /* typing + expand speech */
+    function typeSpeech(text, onDone) {
+      // expand speech smoothly
+      speechEl.style.maxHeight = '300px';
+      speechEl.style.padding = '10px';
+      stopTyping();
+      speechEl.textContent = '';
+      let i = 0;
+      typingHandle = setInterval(() => {
+        speechEl.textContent += text.charAt(i) || '';
+        i++;
+        if (i > text.length) {
+          clearInterval(typingHandle);
+          typingHandle = null;
+          if (typeof onDone === 'function') onDone();
+        }
+      }, 24);
+    }
+    function stopTyping() { if (typingHandle) { clearInterval(typingHandle); typingHandle = null; } }
+
+    /* explain open/close with smooth expand */
+    function openExplainBox() {
+      explainBox.style.display = 'block';
+      // small delay to allow display:block then animate
+      requestAnimationFrame(() => {
+        explainBox.style.maxHeight = '400px';
+        explainBox.style.padding = '10px';
+      });
+      playSound(explainOpenSound);
+    }
+    function closeExplainBox() {
+      explainBox.style.maxHeight = '0';
+      explainBox.style.padding = '0 10px';
+      // after transition hide
+      setTimeout(() => { explainBox.style.display = 'none'; }, 260);
+    }
+
+    /* confetti */
+    function showConfetti() {
+      for (let i = 0; i < 18; i++) {
+        const c = document.createElement('div');
+        c.className = 'confete';
+        c.style.left = (window.innerWidth / 2 + (Math.random() * 260 - 130)) + 'px';
+        c.style.top = (80 + Math.random() * 40) + 'px';
+        c.style.background = ['#ff0', '#f0a', '#0ff', '#0f0', '#f90'][Math.floor(Math.random() * 5)];
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 1800);
+      }
+    }
+    function updateStreakIndicator() {
+      const stars = Array.from(document.querySelectorAll('.st-star'));
+      let lit = streak % 3;
+      if (streak > 0 && lit === 0) lit = 3;
+      stars.forEach((s, idx) => { if (idx < lit) s.classList.add('active'); else s.classList.remove('active'); });
+    }
+
+    /* ============================
+       MENU interactions
+       ============================ */
+    imgPlay.addEventListener('click', () => { playSound(clickSound); tryUnlockAudio(); startGame(); });
+    imgRanking.addEventListener('click', () => { playSound(clickSound); showRanking(); });
+    soundBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      soundIcon.src = soundEnabled ? 'assets/som_ligado.png' : 'assets/som_desligado.png';
+      if (soundEnabled) startAmbient(); else stopAmbient();
+      playSound(clickSound);
+    });
+
+    /* ============================
+       JOGO: iniciar/carregar pergunta
+       ============================ */
+    function startGame() {
+      titleImg.style.display = 'none';
+      menuEl.style.display = 'none';
+      rankingEl.classList.add('hidden');
+      resultEl.classList.add('hidden');
+      quizCard.classList.remove('hidden');
+      document.body.classList.add('quiz-active');
+
+      quizData = generateQuiz();
+      currentQuestion = 0; score = 0; answeredCount = 0; multiplier = 1; streak = 0; correctCount = 0;
+      updateScoreDisplay(); updateProgress(); updateStreakIndicator();
+      loadQuestion();
+    }
+    function loadQuestion() {
       clearInterval(timerHandle);
-      selectAnswer(null, quizData[currentQuestion].correctIndex);
+      stopTyping();
+
+      timeLeft = 20; timerEl.textContent = `Tempo: ${timeLeft}s`;
+      nextBtn.disabled = true;
+      showExplainBtn.style.display = 'none';
+      closeExplainBox(); explainText.textContent = '';
+
+      const q = quizData[currentQuestion];
+      qCounterEl.textContent = `Questão ${currentQuestion + 1} / ${quizData.length}`;
+      // question text is shown in speech balloon via mascote
+      // options area shows choices (questionEl kept for clarity)
+      questionEl.textContent = '';
+      optionsEl.innerHTML = '';
+
+      const idx = shuffleArrayFisherYates([0, 1, 2, 3]);
+      idx.forEach(origIndex => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.type = 'button';
+        btn.textContent = q.options[origIndex];
+        btn.dataset.orig = origIndex;
+        btn.addEventListener('click', () => selectAnswer(origIndex, q.correctIndex));
+        optionsEl.appendChild(btn);
+      });
+
+      // Mascote fala (typing) - show question in speech balloon, timer starts after typing
+      typeSpeech(q.question, () => {
+        // when typing done, also set questionEl for screen readers / visibility
+        questionEl.textContent = q.question;
+        startTimer();
+        const firstBtn = optionsEl.querySelector('.option'); if (firstBtn) firstBtn.focus();
+      });
     }
-  }, 1000);
-}
-function stopTimer(){ if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
 
-/* ============================
-   PROCESSAR RESPOSTA
-   ============================ */
-function selectAnswer(selectedIndex, correctIndex){
-  stopTimer();
-  const buttons = Array.from(optionsEl.querySelectorAll('.option'));
-  buttons.forEach(b => b.disabled = true);
-  buttons.forEach(b => {
-    const orig = Number(b.dataset.orig);
-    if (orig === correctIndex) b.classList.add('correct');
-    if (selectedIndex !== null && orig === selectedIndex && orig !== correctIndex) b.classList.add('wrong');
-  });
-
-  mascoteEl.classList.remove('correct','wrong');
-  if (selectedIndex !== null && selectedIndex === correctIndex) {
-    mascoteEl.classList.add('correct'); setTimeout(()=>mascoteEl.classList.remove('correct'),800);
-  } else {
-    mascoteEl.classList.add('wrong'); setTimeout(()=>mascoteEl.classList.remove('wrong'),800);
-  }
-
-  let prevMultiplier = multiplier;
-  if (selectedIndex !== null && selectedIndex === correctIndex) {
-    streak++;
-    multiplier = 1 + Math.floor(streak / 3) * 0.25;
-    const gained = Math.round(10 * multiplier);
-    score += gained;
-    correctCount++;
-    playSound(correctSound); playSound(coinSound);
-    if (multiplier > prevMultiplier) { playSound(multiplierUpSound); showConfetti(); }
-  } else {
-    streak = 0; multiplier = 1;
-    playSound(wrongSound);
-  }
-
-  answeredCount++;
-  updateProgress();
-  updateScoreDisplay();
-  updateStreakIndicator();
-
-  const q = quizData[currentQuestion];
-  showExplainBtn.style.display = (q.explain && q.explain.trim()) ? 'inline-block' : 'none';
-  explainText.textContent = q.explain || '';
-
-  nextBtn.disabled = false;
-}
-
-/* ============================
-   PRÓXIMA
-   ============================ */
-nextBtn.addEventListener('click', () => {
-  playSound(nextSound);
-  currentQuestion++;
-  if (currentQuestion < quizData.length) loadQuestion();
-  else showResult();
-});
-
-/* ============================
-   EXPLICAÇÃO
-   ============================ */
-showExplainBtn.addEventListener('click', () => openExplainBox());
-closeExplainBtn.addEventListener('click', () => closeExplainBox());
-
-/* ============================
-   RESULTADO
-   ============================ */
-function showResult(){
-  stopTimer();
-  quizCard.classList.add('hidden');
-  resultEl.classList.remove('hidden');
-
-  const percent = Math.round((correctCount / quizData.length) * 100);
-  finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${percent}%)`;
-  medalDiv.innerHTML = '';
-
-  let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
-  let insertPos = list.findIndex(e => score > e.score);
-  if (insertPos === -1) insertPos = list.length;
-
-  let medalFile = null;
-  if (insertPos === 0) medalFile = 'medal_gold.png';
-  else if (insertPos === 1) medalFile = 'medal_silver.png';
-  else if (insertPos === 2) medalFile = 'medal_bronze.png';
-
-  if (medalFile) {
-    const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img);
-    playSound(winSound);
-  }
-  setTimeout(()=>playerNameInput.focus(),200);
-}
-
-/* ============================
-   SALVAR RANKING
-   ============================ */
-function saveRanking(name, pontos){
-  if (!name || !name.trim()) return {ok:false, reason:'empty'};
-  if (name.length < 2 || name.length > 20) return {ok:false, reason:'length'};
-  let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
-  if (list.some(e => e.name === name)) return {ok:false, reason:'duplicate'};
-  list.push({name: name.trim(), score: pontos, date: Date.now()});
-  list.sort((a,b) => b.score - a.score || a.date - b.date);
-  list = list.slice(0, 10);
-  localStorage.setItem('quiz_ranking_v2', JSON.stringify(list));
-  return {ok:true};
-}
-
-saveScoreBtn.addEventListener('click', () => {
-  const name = playerNameInput.value;
-  const res = saveRanking(name, score);
-  if (!res.ok) {
-    if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); }
-    else if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); }
-    else if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); }
-    return;
-  }
-  playerNameInput.value = '';
-  resultEl.classList.add('hidden');
-  menuEl.style.display = 'block';
-  titleImg.style.display = 'block';
-});
-
-/* replay / ver ranking / voltar ao menu */
-replayBtn.addEventListener('click', () => {
-  playSound(clickSound);
-  resultEl.classList.add('hidden');
-  quizCard.classList.remove('hidden');
-  quizData = generateQuiz();
-  currentQuestion = 0; score = 0; answeredCount = 0; multiplier = 1; streak = 0; correctCount = 0;
-  updateScoreDisplay(); updateProgress(); updateStreakIndicator();
-  loadQuestion();
-});
-viewRankingBtn.addEventListener('click', () => showRanking());
-backToMenuBtn.addEventListener('click', () => {
-  resultEl.classList.add('hidden');
-  menuEl.style.display = 'block';
-  titleImg.style.display = 'block';
-});
-
-/* ============================
-   RANKING: renderizar
-   ============================ */
-function showRanking(){
-  menuEl.style.display = 'none';
-  quizCard.classList.add('hidden');
-  resultEl.classList.add('hidden');
-  rankingEl.classList.remove('hidden');
-
-  const list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
-  rankingList.innerHTML = '';
-  list.forEach((entry, i) => {
-    const li = document.createElement('li'); li.style.display='flex'; li.style.alignItems='center'; li.style.gap='8px'; li.style.padding='8px'; li.style.borderRadius='8px'; li.style.marginBottom='6px'; li.style.background='rgba(0,0,0,0.03)';
-    const left = document.createElement('div'); left.style.display='flex'; left.style.alignItems='center'; left.style.gap='8px';
-    if (i===0){ const img=new Image(); img.src='assets/medal_gold.png'; img.style.width='28px'; left.appendChild(img); }
-    else if (i===1){ const img=new Image(); img.src='assets/medal_silver.png'; img.style.width='28px'; left.appendChild(img); }
-    else if (i===2){ const img=new Image(); img.src='assets/medal_bronze.png'; img.style.width='28px'; left.appendChild(img); }
-    const text = document.createElement('span'); text.textContent = `${i+1}. ${entry.name}`; left.appendChild(text);
-    const scoreSpan = document.createElement('span'); scoreSpan.textContent = `${entry.score} pts`; scoreSpan.style.marginLeft='auto';
-    li.appendChild(left); li.appendChild(scoreSpan); rankingList.appendChild(li);
-  });
-}
-backBtn.addEventListener('click', () => {
-  rankingEl.classList.add('hidden');
-  menuEl.style.display = 'block';
-});
-
-/* ============================
-   Teclado: atalhos 1-4, A-D, Enter
-   ============================ */
-window.addEventListener('keydown', (e) => {
-  if (!quizCard.classList.contains('hidden')) {
-    const key = e.key.toLowerCase();
-    if (['1','2','3','4'].includes(key)) {
-      const idx = Number(key)-1;
-      const btns = Array.from(document.querySelectorAll('.option'));
-      if (btns[idx] && !btns[idx].disabled) btns[idx].click();
-    } else if (['a','b','c','d'].includes(key)) {
-      const map = {'a':0,'b':1,'c':2,'d':3};
-      const btns = Array.from(document.querySelectorAll('.option'));
-      if (btns[map[key]] && !btns[map[key]].disabled) btns[map[key]].click();
-    } else if (key === 'enter') {
-      if (!nextBtn.disabled) nextBtn.click();
+    /* ============================
+       TIMER
+       ============================ */
+    function startTimer() {
+      clearInterval(timerHandle);
+      const total = 20; let elapsed = 0;
+      if (progressBar.querySelectorAll('.coin').length === 0) updateProgress();
+      timerHandle = setInterval(() => {
+        elapsed += 1;
+        timeLeft = total - elapsed;
+        if (timeLeft < 0) timeLeft = 0;
+        timerEl.textContent = `Tempo: ${timeLeft}s`;
+        if (elapsed >= total) {
+          clearInterval(timerHandle);
+          selectAnswer(null, quizData[currentQuestion].correctIndex);
+        }
+      }, 1000);
     }
-  }
-});
+    function stopTimer() { if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
 
-/* ============================
-   Inicial UI
-   ============================ */
-menuEl.style.display = 'block';
-quizCard.classList.add('hidden');
-resultEl.classList.add('hidden');
-rankingEl.classList.add('hidden');
-updateProgress();
-updateScoreDisplay();
-updateStreakIndicator();
+    /* ============================
+       PROCESSAR RESPOSTA
+       ============================ */
+    function selectAnswer(selectedIndex, correctIndex) {
+      stopTimer();
+      const buttons = Array.from(optionsEl.querySelectorAll('.option'));
+      buttons.forEach(b => b.disabled = true);
+      buttons.forEach(b => {
+        const orig = Number(b.dataset.orig);
+        if (orig === correctIndex) b.classList.add('correct');
+        if (selectedIndex !== null && orig === selectedIndex && orig !== correctIndex) b.classList.add('wrong');
+      });
+
+      mascoteEl.classList.remove('correct', 'wrong');
+      if (selectedIndex !== null && selectedIndex === correctIndex) {
+        mascoteEl.classList.add('correct'); setTimeout(() => mascoteEl.classList.remove('correct'), 800);
+      } else {
+        mascoteEl.classList.add('wrong'); setTimeout(() => mascoteEl.classList.remove('wrong'), 800);
+      }
+
+      let prevMultiplier = multiplier;
+      if (selectedIndex !== null && selectedIndex === correctIndex) {
+        streak++;
+        multiplier = 1 + Math.floor(streak / 3) * 0.25;
+        const gained = Math.round(10 * multiplier);
+        score += gained;
+        correctCount++;
+        playSound(correctSound); playSound(coinSound);
+        if (multiplier > prevMultiplier) { playSound(multiplierUpSound); showConfetti(); }
+      } else {
+        streak = 0; multiplier = 1;
+        playSound(wrongSound);
+      }
+
+      answeredCount++;
+      updateProgress();
+      updateScoreDisplay();
+      updateStreakIndicator();
+
+      const q = quizData[currentQuestion];
+      showExplainBtn.style.display = (q.explain && q.explain.trim()) ? 'inline-block' : 'none';
+      explainText.textContent = q.explain || '';
+
+      nextBtn.disabled = false;
+    }
+
+    /* ============================
+       PRÓXIMA
+       ============================ */
+    nextBtn.addEventListener('click', () => {
+      playSound(nextSound);
+      currentQuestion++;
+      if (currentQuestion < quizData.length) loadQuestion();
+      else showResult();
+    });
+
+    /* ============================
+       EXPLICAÇÃO
+       ============================ */
+    showExplainBtn.addEventListener('click', () => openExplainBox());
+    closeExplainBtn.addEventListener('click', () => closeExplainBox());
+
+    /* ============================
+       RESULTADO
+       ============================ */
+    function showResult() {
+      stopTimer();
+      quizCard.classList.add('hidden');
+      resultEl.classList.remove('hidden');
+
+      const percent = Math.round((correctCount / quizData.length) * 100);
+      finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${percent}%)`;
+      medalDiv.innerHTML = '';
+
+      let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
+      let insertPos = list.findIndex(e => score > e.score);
+      if (insertPos === -1) insertPos = list.length;
+
+      let medalFile = null;
+      if (insertPos === 0) medalFile = 'medal_gold.png';
+      else if (insertPos === 1) medalFile = 'medal_silver.png';
+      else if (insertPos === 2) medalFile = 'medal_bronze.png';
+
+      if (medalFile) {
+        const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img);
+        playSound(winSound);
+      }
+      setTimeout(() => playerNameInput.focus(), 200);
+    }
+
+    /* ============================
+       SALVAR RANKING
+       ============================ */
+    function saveRanking(name, pontos) {
+      if (!name || !name.trim()) return { ok: false, reason: 'empty' };
+      if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
+      let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
+      if (list.some(e => e.name === name)) return { ok: false, reason: 'duplicate' };
+      list.push({ name: name.trim(), score: pontos, date: Date.now() });
+      list.sort((a, b) => b.score - a.score || a.date - b.date);
+      list = list.slice(0, 10);
+      localStorage.setItem('quiz_ranking_v2', JSON.stringify(list));
+      return { ok: true };
+    }
+
+    saveScoreBtn.addEventListener('click', () => {
+      const name = playerNameInput.value;
+      const res = saveRanking(name, score);
+      if (!res.ok) {
+        if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); }
+        else if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); }
+        else if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); }
+        return;
+      }
+      playerNameInput.value = '';
+      resultEl.classList.add('hidden');
+      menuEl.style.display = 'block';
+      titleImg.style.display = 'block';
+    });
+
+    /* replay / ver ranking / voltar ao menu */
+    replayBtn.addEventListener('click', () => {
+      playSound(clickSound);
+      resultEl.classList.add('hidden');
+      quizCard.classList.remove('hidden');
+      quizData = generateQuiz();
+      currentQuestion = 0; score = 0; answeredCount = 0; multiplier = 1; streak = 0; correctCount = 0;
+      updateScoreDisplay(); updateProgress(); updateStreakIndicator();
+      loadQuestion();
+    });
+    viewRankingBtn.addEventListener('click', () => showRanking());
+    backToMenuBtn.addEventListener('click', () => {
+      resultEl.classList.add('hidden');
+      menuEl.style.display = 'block';
+      titleImg.style.display = 'block';
+    });
+
+    /* ============================
+       RANKING: renderizar
+       ============================ */
+    function showRanking() {
+      menuEl.style.display = 'none';
+      quizCard.classList.add('hidden');
+      resultEl.classList.add('hidden');
+      rankingEl.classList.remove('hidden');
+
+      const list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
+      rankingList.innerHTML = '';
+      list.forEach((entry, i) => {
+        const li = document.createElement('li'); li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px'; li.style.padding = '8px'; li.style.borderRadius = '8px'; li.style.marginBottom = '6px'; li.style.background = 'rgba(0,0,0,0.03)';
+        const left = document.createElement('div'); left.style.display = 'flex'; left.style.alignItems = 'center'; left.style.gap = '8px';
+        if (i === 0) { const img = new Image(); img.src = 'assets/medal_gold.png'; img.style.width = '28px'; left.appendChild(img); }
+        else if (i === 1) { const img = new Image(); img.src = 'assets/medal_silver.png'; img.style.width = '28px'; left.appendChild(img); }
+        else if (i === 2) { const img = new Image(); img.src = 'assets/medal_bronze.png'; img.style.width = '28px'; left.appendChild(img); }
+        const text = document.createElement('span'); text.textContent = `${i + 1}. ${entry.name}`; left.appendChild(text);
+        const scoreSpan = document.createElement('span'); scoreSpan.textContent = `${entry.score} pts`; scoreSpan.style.marginLeft = 'auto';
+        li.appendChild(left); li.appendChild(scoreSpan); rankingList.appendChild(li);
+      });
+    }
+    backBtn.addEventListener('click', () => {
+      rankingEl.classList.add('hidden');
+      menuEl.style.display = 'block';
+    });
+
+    /* ============================
+       Teclado: atalhos 1-4, A-D, Enter
+       ============================ */
+    window.addEventListener('keydown', (e) => {
+      if (!quizCard.classList.contains('hidden')) {
+        const key = e.key.toLowerCase();
+        if (['1', '2', '3', '4'].includes(key)) {
+          const idx = Number(key) - 1;
+          const btns = Array.from(document.querySelectorAll('.option'));
+          if (btns[idx] && !btns[idx].disabled) btns[idx].click();
+        } else if (['a', 'b', 'c', 'd'].includes(key)) {
+          const map = { 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+          const btns = Array.from(document.querySelectorAll('.option'));
+          if (btns[map[key]] && !btns[map[key]].disabled) btns[map[key]].click();
+        } else if (key === 'enter') {
+          if (!nextBtn.disabled) nextBtn.click();
+        }
+      }
+    });
+
+    /* ============================
+       Inicial UI
+       ============================ */
+    menuEl.style.display = 'block';
+    quizCard.classList.add('hidden');
+    resultEl.classList.add('hidden');
+    rankingEl.classList.add('hidden');
+    updateProgress();
+    updateScoreDisplay();
+    updateStreakIndicator();
 
   </script>
 </body>
+
 </html>
