@@ -5,15 +5,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Quiz Interativo — Economia, Finanças e Investimentos</title>
+
+  <!-- Firebase compat SDK (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --bg-blue: #4da6ff;
       --card-bg: #fff8e6;
       --brown-border: #8a5a2b;
-      --stardew-brown: #c08943;
       --accent: #7c3aed;
-      --accent2: #f59e0b;
-      --muted: #6b7280;
       --text: #112;
     }
 
@@ -66,9 +68,10 @@
       padding: 14px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
       border: 4px solid rgba(0, 0, 0, 0.06);
+      box-sizing: border-box;
     }
 
-    /* Menu: painel marrom — compacto, ligeiramente maior que os botões */
+    /* Menu (não mexi muito) */
     .stardew-menu {
       width: 180px;
       display: flex;
@@ -82,7 +85,7 @@
       box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.12);
       border-radius: 12px;
       margin: 0 auto;
-      min-height: 104px;
+      min-height: 96px;
       box-sizing: border-box;
     }
 
@@ -98,18 +101,14 @@
       background: transparent;
       border: none;
       box-shadow: 0 6px 0 rgba(0, 0, 0, 0.06);
-      transition: transform .12s ease;
+      transition: transform .12s ease
     }
 
     .stardew-menu .menu-img-btn img {
       width: 100%;
       height: auto;
       display: block;
-      pointer-events: none;
-    }
-
-    .stardew-menu .menu-img-btn:active {
-      transform: translateY(2px)
+      pointer-events: none
     }
 
     .menu-row {
@@ -118,7 +117,7 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      margin-top: 4px;
+      margin-top: 4px
     }
 
     .icon-btn {
@@ -135,30 +134,20 @@
       display: block
     }
 
-    /* DIMINUIÇÃO DO CARTÃO MARROM PRINCIPAL (QUIZ) */
+    /* QUIZ CARD — mais delicada: borda/padding reduzidos, visual marrom suave */
     .quiz-card {
       flex: 1;
-      max-width: 560px;
-      /* limite geral do cartão */
+      max-width: 600px;
       min-width: 220px;
-      padding: 12px;
-      /* um pouco menor */
+      padding: 10px;
+      border: 3px solid var(--brown-border);
+      background: linear-gradient(180deg, #f7e8c8, #f2dfb6);
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.04), 0 8px 18px rgba(0, 0, 0, 0.10);
+      border-radius: 12px;
       box-sizing: border-box;
     }
 
-    /* AREA DE PERGUNTAS: reduzida, alinhada à esquerda para "colar" o mascote */
-    .question-table {
-      position: relative;
-      max-width: 520px;
-      /* <-- reduzido para caber semelhante à sua imagem */
-      margin: 8px auto;
-      text-align: left;
-      padding: 10px 14px;
-      box-sizing: border-box;
-      background: transparent;
-    }
-
-    /* mascote ao canto esquerdo dentro da question-table */
+    /* topo */
     .mascote-wrap {
       display: flex;
       gap: 12px;
@@ -166,19 +155,21 @@
       justify-content: flex-start;
       width: 100%;
       box-sizing: border-box;
-      margin-bottom: 6px;
+      padding-bottom: 6px;
     }
 
+    /* mascote: sem fundo branco, transparente (se PNG tiver transparência) */
     #mascote {
-      width: 110px;
-      /* um pouco maior para ficar parecido com a sua imagem */
+      width: 88px;
       height: auto;
-      display: block;
       border-radius: 8px;
       flex: 0 0 auto;
+      margin: 0;
       animation: flut 3s ease-in-out infinite;
+      display: block;
     }
 
+    /* flutuação mantida */
     @keyframes flut {
 
       0%,
@@ -191,48 +182,40 @@
       }
     }
 
-    /* balão ao lado do mascote — fica mais compacto e centralizado sobre as moedas */
+    /* balão mais destacado, maior fonte e negrito; balão expande após digitação */
     .speech {
-      background: #fff;
-      border: 2px solid rgba(0, 0, 0, 0.06);
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 14px;
+      background: #ffffff;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
       line-height: 1.25;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
       overflow: hidden;
-      max-width: 320px;
-      /* pequeno e parecido com sua captura */
-      width: calc(100% - 132px);
-      /* ocupa o resto do espaço ao lado do mascote */
+      width: calc(100% - 116px);
       transition: max-height 220ms ease, padding 160ms ease;
+      color: #111;
+      max-height: 220px;
     }
 
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* timer posicionado abaixo do mascote (estilizado minimal) */
+    .timer-below-mascote {
       margin-top: 8px;
-    }
-
-    #qCounter {
-      display: none !important;
-    }
-
-    /* você pediu escondê-lo */
-    #timer {
       font-weight: 800;
       color: #d97706;
-      margin-left: 6px;
+      font-size: 15px;
+      text-align: left;
+      padding-left: 4px
     }
 
-    /* progresso: centralizado em 6 colunas, aparece logo abaixo do balão */
+    /* progresso */
     .progress {
       display: grid;
       grid-template-columns: repeat(6, 34px);
       gap: 8px;
       justify-content: center;
-      margin: 10px auto 14px;
+      margin: 12px auto
     }
 
     .coin {
@@ -240,54 +223,71 @@
       height: 34px;
       background-image: url('assets/moeda.png');
       background-size: cover;
-      opacity: .28;
-      transition: opacity .18s, transform .2s;
+      opacity: .24;
+      transition: opacity .18s, transform .2s
     }
 
     .coin.active {
       opacity: 1;
-      transform: translateY(-6px);
+      transform: translateY(-6px)
     }
 
-    /* alternativas: ocupam mais largura (quase toda a tabela marrom) */
+    .coin.wrong {
+      background-image: url('assets/x.png');
+      opacity: 1;
+      transform: none
+    }
+
+    /* question table */
+    .question-table {
+      max-width: 620px;
+      margin: 12px auto;
+      text-align: center
+    }
+
+    #question {
+      font-weight: 700;
+      font-size: 16px;
+      margin: 10px 0;
+      display: none
+    }
+
     .options {
       display: grid;
-      grid-template-columns: repeat(1, 1fr);
-      /* uma coluna em mobile/desktop para as opções largas */
-      gap: 12px;
-      justify-items: center;
-      width: 100%;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      justify-items: center
     }
 
     .option {
       background: #f3f4f6;
-      padding: 14px 18px;
+      padding: 12px;
       border-radius: 10px;
       border: 2px solid transparent;
       cursor: pointer;
       text-align: left;
-      font-size: 16px;
+      font-size: 15px;
       transition: transform .12s, box-shadow .12s;
       width: 100%;
-      max-width: 100%;
-      /* ocupa toda a largura disponível dentro de question-table */
-      box-sizing: border-box;
+      max-width: 340px
     }
 
     .option:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.06);
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.06)
     }
 
     .option.correct {
       background: #16a34a;
       color: white;
+      border-color: rgba(0, 0, 0, 0.06);
       box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08)
     }
 
     .option.wrong {
       background: #dc2626;
       color: white;
+      border-color: rgba(0, 0, 0, 0.06)
     }
 
     #explainBox {
@@ -306,7 +306,7 @@
     #streakIndicator {
       display: flex;
       gap: 6px;
-      align-items: center;
+      align-items: center
     }
 
     .st-star {
@@ -357,84 +357,107 @@
       margin: 12px auto
     }
 
-    /* responsividade */
-    @media (min-width:720px) {
-
-      /* em telas maiores, manter uma coluna larga para as opções (sem duas colunas que encolhem) */
-      .options {
-        grid-template-columns: 1fr;
+    @media (max-width:980px) {
+      .wrap {
+        flex-direction: column;
+        align-items: center;
+        padding: 8px
       }
-    }
 
-    @media (max-width:720px) {
+      .stardew-menu {
+        width: 92%;
+        max-width: 320px
+      }
+
+      .quiz-card {
+        width: 92%
+      }
+
       .mascote-wrap {
-        gap: 10px;
-      }
-
-      #mascote {
-        width: 86px;
+        flex-direction: row;
+        align-items: flex-start
       }
 
       .speech {
-        max-width: 260px;
-        width: calc(100% - 110px);
+        width: calc(100% - 112px)
+      }
+
+      .options {
+        grid-template-columns: 1fr
       }
 
       .progress {
         grid-template-columns: repeat(6, 28px)
       }
+
+      .menu-img-btn {
+        max-width: 160px
+      }
+    }
+
+    @media (max-width:420px) {
+      #mascote {
+        width: 72px
+      }
+
+      .coin {
+        width: 28px;
+        height: 28px
+      }
+
+      .st-star {
+        width: 16px;
+        height: 16px
+      }
+
+      .speech {
+        font-size: 16px;
+        line-height: 1.2;
+        padding: 10px
+      }
+
+      .menu-img-btn {
+        max-width: 140px
+      }
     }
 
     .hidden {
-      display: none;
+      display: none
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <!-- título (fora da caixa marrom) -->
+
+    <!-- título fora -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
       <img id="titleImg" src="assets/titulo.png" alt="Título"
         style="width:360px;max-width:86%;display:block;margin:6px auto 10px">
     </div>
 
-    <!-- MENU (caixa marrom reduzida; sem título interno) -->
+    <!-- MENU -->
     <div id="menu" class="card stardew-menu" aria-label="Menu principal">
-      <button id="imgPlay" class="menu-img-btn" aria-label="Jogar">
-        <img src="assets/jogar.png" alt="Jogar">
-      </button>
-
-      <button id="imgRanking" class="menu-img-btn" aria-label="Ranking">
-        <img src="assets/ranking.png" alt="Ranking">
-      </button>
-
-      <div class="menu-row">
-        <button id="soundBtn" class="icon-btn" aria-label="Som">
-          <img id="soundIcon" src="assets/som_ligado.png" alt="Som ligado">
-        </button>
-      </div>
+      <button id="imgPlay" class="menu-img-btn" aria-label="Jogar"><img src="assets/jogar.png" alt="Jogar"></button>
+      <button id="imgRanking" class="menu-img-btn" aria-label="Ranking"><img src="assets/ranking.png"
+          alt="Ranking"></button>
+      <div class="menu-row"><button id="soundBtn" class="icon-btn" aria-label="Som"><img id="soundIcon"
+            src="assets/som_ligado.png" alt="Som ligado"></button></div>
     </div>
 
     <!-- QUIZ -->
     <div id="quizCard" class="card quiz-card hidden" role="application" aria-live="polite">
+      <div class="mascote-wrap">
+        <img id="mascote" src="assets/mascote.png" alt="Mascote">
+        <div style="flex:1;min-width:0">
+          <div id="speech" class="speech" aria-live="polite"></div>
+          <div class="timer-below-mascote" id="timer">Tempo: 20s</div>
+        </div>
+      </div>
 
       <div class="question-table">
-        <!-- mascote posicionado dentro da question-table, canto superior-esquerdo -->
-        <div class="mascote-wrap">
-          <img id="mascote" src="assets/mascote.png" alt="Mascote" />
-          <div style="flex:1;min-width:0;">
-            <div id="speech" class="speech" aria-live="polite"></div>
-            <div class="top-row"
-              style="margin-top:8px;align-items:center;display:flex;justify-content:flex-end;gap:8px">
-              <div id="timer">Tempo: 20s</div>
-            </div>
-          </div>
-        </div>
-
         <div class="progress" id="progressBar" aria-hidden="true"></div>
-        <div id="question" style="display:none;">Pergunta aparecerá aqui</div>
-        <!-- pergunta fica oculta (mas mantida p/ SR) -->
+        <div id="question">Pergunta aparecerá aqui</div>
         <div class="options" id="options" role="list"></div>
 
         <div id="explainBox" aria-hidden="true">
@@ -486,26 +509,44 @@
   </div>
 
   <script>
-    /* ============================
-       PRELOAD IMAGENS e SONS
-       ============================ */
+    /* =========================
+       Firebase init (compat)
+       ========================= */
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFI1MepkOB4VAPqCKDYh60Ruc4UfwqUgy",
+      authDomain: "quizeconomia.firebaseapp.com",
+      projectId: "quizeconomia",
+      storageBucket: "quizeconomia.firebasestorage.app",
+      messagingSenderId: "789254280953",
+      appId: "1:789254280953:web:ba032626e34beb3593b428"
+    };
+    let db = null;
+    let firebaseAvailable = false;
+    try {
+      if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        firebaseAvailable = true;
+        console.log('Firebase inicializado (compat)');
+      }
+    } catch (err) { console.warn('Firebase não inicializado:', err); firebaseAvailable = false; }
+
+    /* =========================
+       PRELOAD / SONS
+       ========================= */
     const preloadImages = [
       'assets/tela_fundo.png', 'assets/titulo.png', 'assets/mascote.png', 'assets/moeda.png',
       'assets/medal_gold.png', 'assets/medal_silver.png', 'assets/medal_bronze.png',
-      'assets/jogar.png', 'assets/ranking.png', 'assets/som_ligado.png', 'assets/som_desligado.png'
+      'assets/jogar.png', 'assets/ranking.png', 'assets/som_ligado.png', 'assets/som_desligado.png', 'assets/x.png'
     ];
     preloadImages.forEach(s => { const i = new Image(); i.src = s; });
 
     function loadAudio(src, volume = 1.0, loop = false) {
       const a = new Audio(src);
-      a.preload = 'auto';
-      a.volume = volume;
-      a.loop = loop;
+      a.preload = 'auto'; a.volume = volume; a.loop = loop;
       try { a.load(); } catch (e) { }
       return a;
     }
-
-    // SONS (ajustados volumes)
     const correctSound = loadAudio('assets/acerto.mp3', 0.45, false);
     const wrongSound = loadAudio('assets/erro.mp3', 0.92, false);
     const nextSound = loadAudio('assets/next.mp3', 0.38, false);
@@ -517,11 +558,7 @@
     const ambientSound = loadAudio('assets/ambiente.mp3', 0.28, true);
 
     window.addEventListener('load', () => {
-      try {
-        ambientSound.currentTime = 0;
-        const p = ambientSound.play();
-        if (p && p.catch) p.catch(() => { });
-      } catch (e) { }
+      try { ambientSound.currentTime = 0; const p = ambientSound.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { }
     });
 
     let soundEnabled = true;
@@ -540,46 +577,53 @@
     }
     document.body.addEventListener('click', tryUnlockAudio, { once: true });
 
-    const questionBank = [
-      { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento em Bolsa"], correctIndex: 0, explain: "A soma de todos os bens e serviços finais produzidos em uma economia. É o principal indicador para medir o tamanho e a saúde de um país." },
-      { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos de youtubers", "Investir em startups", "Fiscalizar piadas de políticos", "Regular a taxa de juros para controlar a inflação"], correctIndex: 3, explain: "Sua função é garantir a estabilidade do poder de compra da moeda, controlando a inflação." },
-      { question: "O que é inflação?", options: ["Valorização de criptomoeda", "Aumento generalizado e contínuo dos preços", "Reforma política do governo", "Abertura de capital de uma empresa"], correctIndex: 1, explain: "A inflação causa a diminuição do poder de compra da moeda." },
-      { question: "O que é investimento?", options: ["Comprar roupas de luxo", "Aplicar dinheiro para fazê-lo crescer", "Gasto do governo em obras", "Transferir dinheiro entre familiares"], correctIndex: 1, explain: "O objetivo é fazer o dinheiro trabalhar para você e crescer ao longo do tempo." },
-      { question: "Para que serve uma reserva de emergência?", options: ["Comprar NFTs de youtubers", "Comprar ações", "Cobrir despesas inesperadas (desemprego, saúde)", "Financiar campanha política"], correctIndex: 2, explain: "Ela oferece segurança financeira, evitando que você precise se endividar em caso de imprevistos." },
-      { question: "O que é capital de giro?", options: ["Dinheiro de youtubers", "Dinheiro para pagar despesas operacionais (salários, aluguel)", "Receita total de vendas", "Dívida com fornecedores"], correctIndex: 1, explain: "Sem capital de giro, uma empresa não consegue manter suas atividades funcionando." },
-      { question: "Diferença entre receita e lucro?", options: ["Receita é o que o governo gasta", "Receita é o que entra; lucro é o que sobra após os custos", "Lucro é o que empresas pagam a influenciadores", "Não há diferença"], correctIndex: 1, explain: "O lucro realmente reflete a saúde financeira do negócio." },
-      { question: "Objetivo da política fiscal expansionista?", options: ["Aumentar impostos para jogos de apostas", "Reduzir poder de compra e tirar a moeda de circulação vendendo títulos", "Aumentar gastos e/ou reduzir impostos para estimular a economia", "Diminuir partidos políticos"], correctIndex: 2, explain: "O objetivo é injetar dinheiro na economia para aumentar o consumo e o investimento." },
-      { question: "Relação entre taxa de juros e inflação?", options: ["Juros altos ajudam a combater a inflação", "Juros altos aumentam a inflação", "Juros baixos ajudam a combater a inflação", "Sem relação"], correctIndex: 0, explain: "Juros mais altos desincentivam o consumo e o crédito, controlando os preços." },
-      { question: "O que é modelo de negócios?", options: ["Descrição de como a empresa cria, entrega e captura valor", "Plano de marketing de político", "Quantia que Netflix usou para financiar filmes e séries", "Lista de produtos"], correctIndex: 0, explain: "O modelo de negócios é a estrutura que sustenta a viabilidade de uma empresa no mercado." },
-      { question: "O que é diversificação em investimentos?", options: ["Ação de ex-ministro", "Comprar só um tipo de ativo", "Construção de nova sede", "Espalhar investimentos em diferentes ativos para reduzir risco"], correctIndex: 3, explain: "Distribuir os investimentos diminui a chance de perder dinheiro." },
-      { question: "O que é empreendedorismo social?", options: ["Criar empresa para lucrar", "Interagir com seguidores em redes sociais", "Criar empresa para resolver problema social ou ambiental", "Iniciativa do governo para combater pobreza"], correctIndex: 2, explain: "O objetivo principal é causar um impacto positivo na sociedade." },
-      { question: "O que é um ativo?", options: ["Conta de luz", "Bem ou direito que pode ser convertido em dinheiro", "Nova lei de imposto", "Valor que youtuber recebe"], correctIndex: 1, explain: "Ativos são tudo o que pode gerar benefício econômico futuro." },
-      { question: "O que é fluxo de caixa?", options: ["Movimento de entrada e saída de dinheiro em um período", "Diferença de ganhos da receita federal de um trimestre para o outro", "Quantidade de produtos vendidos", "Valor total de dívidas"], correctIndex: 0, explain: "Analisar o fluxo de caixa é essencial para entender a saúde financeira de um negócio." },
-      { question: "O que é crowdfunding?", options: ["Modelo de negócio de jogos de aposta", "Pedido de doação de youtuber", "Financiamento coletivo pela internet, sem um único grande investidor", "Venda de ações na bolsa"], correctIndex: 2, explain: "É uma alternativa de financiamento coletivo, geralmente pela internet." },
-      { question: "O que é juro composto?", options: ["Juro sobre o capital inicial", "Juros que banco central cobra", "Juro sobre o capital inicial e juros acumulados", "Taxa de banco"], correctIndex: 2, explain: "É o 'juro sobre juro', o que faz o dinheiro crescer de forma exponencial." },
-      { question: "Diferença entre passivo e ativo?", options: ["Ativo é patrimônio de político, passivo é dívida", "Ativo é o que põe dinheiro no bolso; passivo é o que tira", "Ativo é o que compra, passivo é o que vende", "Não há diferença"], correctIndex: 1, explain: "Passivo é o oposto de ativo, representando as dívidas e obrigações." },
-      { question: "Para que serve o orçamento pessoal?", options: ["Gastar dinheiro sem controle", "Entender para onde o dinheiro está indo e planejar gastos", "Financiar campanha de youtuber", "Estimativa de gastos do presidente"], correctIndex: 1, explain: "Ele ajuda a tomar decisões mais conscientes e alcançar objetivos financeiros." },
-      { question: "O que é empreendedorismo por necessidade?", options: ["Abrir negócio para atender a mercado", "Venda de produtos digitais", "Tipo de empreendedorismo que político defende", "Criar um negócio por não encontrar emprego formal"], correctIndex: 3, explain: "É motivado pela falta de opção, e não por uma oportunidade de mercado." },
-      { question: "O que é marketing digital?", options: ["Criação de podcasts", "Conjunto de ações de marketing na internet", "Promoção de político", "Venda em loja virtual"], correctIndex: 1, explain: "O objetivo é atrair clientes e construir relacionamentos usando a tecnologia." },
-      { question: "O que é renda fixa?", options: ["Investimento com risco zero", "Investimento com rentabilidade conhecida ou pré-calculada", "Investimento apenas em fundos", "Investimento de político"], correctIndex: 1, explain: "É considerado mais seguro, pois o investidor sabe como será a rentabilidade." },
-      { question: "O que é empreendedorismo feminino?", options: ["Negócio com equipe só de mulheres", "Negócio para o público feminino", "Mulheres que criam e gerenciam seus próprios negócios", "Ação de influencer"], correctIndex: 2, explain: "Contribui para a autonomia financeira feminina e a diversidade no mercado." },
-      { question: "O que é marketing de conteúdo?", options: ["Produção de conteúdo de político", "Criação de conteúdo para atrair e engajar público", "Compra de anúncios", "Blog sobre vida de youtuber"], correctIndex: 1, explain: "O objetivo é educar, entreter e converter clientes de forma indireta." },
-      { question: "O que é endividamento?", options: ["Pegar empréstimo", "Pagar contas em dia", "Situação em que despesas são maiores que receitas", "Aumento do salário mínimo"], correctIndex: 2, explain: "O alto endividamento pode levar à perda de ativos e instabilidade financeira." },
-      { question: "O que é uma startup?", options: ["Empresa pequena que vende artesanato apenas no estado no qual reside", "Música de youtuber", "Uma série que aborda temas como tecnologias", "Empresa de tecnologia em busca de modelo de negócio escalável"], correctIndex: 3, explain: "Busca resolver um problema de forma inovadora em condições de incerteza." },
-      { question: "O que é imposto de renda?", options: ["Valor que as pessoas pagam para declarar consumo em videogames/streamings", "Imposto sobre produtos importados", "Imposto municipal sobre imóveis", "Imposto federal sobre a renda de pessoas e empresas"], correctIndex: 3, explain: "É um dos principais meios do governo arrecadar recursos para financiar serviços públicos." },
-      { question: "O que é empreendedorismo digital?", options: ["Canal no YouTube para vlogs", "Político usando redes sociais", "Negócio que usa a internet e tecnologias digitais", "Loja de rua"], correctIndex: 2, explain: "Explora o potencial da internet para atingir um público amplo com baixo custo." },
-      { question: "O que é microcrédito?", options: ["Empréstimo de pequeno valor para microempreendedores", "Empréstimo para grandes empresas", "Empréstimo de R$1 milhão", "Taxa de juros do Banco Central"], correctIndex: 0, explain: "Visa promover a inclusão financeira e o desenvolvimento econômico em comunidades." },
-      { question: "O que é risco em investimentos?", options: ["Possibilidade de perder dinheiro em um investimento", "Quantia que o Banco Central investiu", "Lucro garantido", "Valor do imposto"], correctIndex: 0, explain: "Em geral, quanto maior o potencial de retorno, maior é o risco envolvido." },
-      { question: "O que é a taxa Selic?", options: ["Taxa para privatizar estatais", "Taxa básica de juros da economia brasileira", "Juros que bancos cobram dos clientes", "Valor que governo paga a youtubers"], correctIndex: 1, explain: "Serve como referência para todas as outras taxas de juros do país, influenciando o crédito." }
+    /* =========================
+       Banco + IDs originais
+       =========================
+       Observe: cada pergunta recebe _id = índice original do banco
+       para poder rastrear 'misses' remotamente/localmente.
+    */
+    const questionBankRaw = [
+      { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento"], correctIndex: 0, explain: "PIB é a soma de todos os bens e serviços finais produzidos em um país." },
+      { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos", "Investir em startups", "Fiscalizar políticos", "Regular juros"], correctIndex: 3, explain: "O BC controla a inflação e garante a estabilidade da moeda." },
+      { question: "O que é inflação?", options: ["Valorização de criptomoeda", "Alta de preços", "Reforma política", "Abertura de capital"], correctIndex: 1, explain: "Inflação é o aumento contínuo e generalizado dos preços." },
+      { question: "O que é investimento?", options: ["Comprar roupas", "Aplicar dinheiro", "Gasto público", "Transferir dinheiro"], correctIndex: 1, explain: "Investir é aplicar recursos esperando retorno futuro." },
+      { question: "Para que serve uma reserva de emergência?", options: ["Comprar NFTs", "Comprar ações", "Cobrir imprevistos", "Campanha política"], correctIndex: 2, explain: "Reserva protege contra despesas inesperadas sem endividamento." },
+      { question: "O que é capital de giro?", options: ["Dinheiro de youtubers", "Despesas operacionais", "Receita total", "Dívida com fornecedores"], correctIndex: 1, explain: "Capital de giro financia as operações do dia a dia da empresa." },
+      { question: "Diferença entre receita e lucro?", options: ["Gasto do governo", "Receita entra, lucro sobra", "Lucro pago a influenciadores", "Não há diferença"], correctIndex: 1, explain: "Receita é o total recebido; lucro é o que sobra após custos." },
+      { question: "Objetivo da política fiscal expansionista?", options: ["Aumentar impostos", "Reduzir poder de compra", "Aumentar gastos/reduzir impostos", "Diminuir partidos"], correctIndex: 2, explain: "Busca estimular a economia com mais gastos ou menos impostos." },
+      { question: "Relação entre juros e inflação?", options: ["Juros altos combatem inflação", "Juros altos aumentam inflação", "Juros baixos combatem inflação", "Sem relação"], correctIndex: 0, explain: "Taxas mais altas reduzem consumo e ajudam a controlar preços." },
+      { question: "O que é modelo de negócios?", options: ["Criar e entregar valor", "Plano político", "Orçamento da Netflix", "Lista de produtos"], correctIndex: 0, explain: "Define como a empresa gera valor e se mantém viável." },
+      { question: "O que é diversificação?", options: ["Ação de ex-ministro", "Comprar só 1 ativo", "Nova sede", "Espalhar investimentos"], correctIndex: 3, explain: "Diversificar reduz riscos ao investir em ativos diferentes." },
+      { question: "O que é empreendedorismo social?", options: ["Lucrar", "Postar em redes", "Resolver problema social", "Iniciativa do governo"], correctIndex: 2, explain: "Empreender com foco em impacto social ou ambiental." },
+      { question: "O que é um ativo?", options: ["Conta de luz", "Bem convertível em dinheiro", "Nova lei", "Renda de youtuber"], correctIndex: 1, explain: "Ativos são bens ou direitos com valor econômico futuro." },
+      { question: "O que é fluxo de caixa?", options: ["Entradas e saídas de dinheiro", "Diferença da Receita Federal", "Qtd. de produtos vendidos", "Valor total de dívidas"], correctIndex: 0, explain: "Mostra entradas e saídas financeiras de um período." },
+      { question: "O que é crowdfunding?", options: ["Aposta", "Doação de youtuber", "Financiamento coletivo", "Venda de ações"], correctIndex: 2, explain: "Forma de financiar projetos com várias pessoas apoiando." },
+      { question: "O que é juro composto?", options: ["Juro sobre capital inicial", "Taxa de banco", "Juro sobre capital e juros", "Juro do BC"], correctIndex: 2, explain: "É o 'juro sobre juro', que gera crescimento exponencial." },
+      { question: "Diferença entre ativo e passivo?", options: ["Ativo de político, passivo dívida", "Ativo põe dinheiro, passivo tira", "Ativo compra, passivo vende", "Não há diferença"], correctIndex: 1, explain: "Ativo gera renda; passivo são dívidas/obrigações." },
+      { question: "Para que serve orçamento pessoal?", options: ["Gastar sem controle", "Planejar gastos", "Campanha de youtuber", "Estimativa presidencial"], correctIndex: 1, explain: "Ajuda a controlar despesas e alcançar objetivos financeiros." },
+      { question: "Empreendedorismo por necessidade?", options: ["Atender mercado", "Produtos digitais", "Defendido por político", "Abrir por falta de emprego"], correctIndex: 3, explain: "Motivado pela falta de emprego, não por oportunidade." },
+      { question: "O que é marketing digital?", options: ["Criar podcasts", "Ações na internet", "Promoção política", "Venda em loja"], correctIndex: 1, explain: "Conjunto de ações online para atrair e fidelizar clientes." },
+      { question: "O que é renda fixa?", options: ["Risco zero", "Rentabilidade previsível", "Só fundos", "Investimento de político"], correctIndex: 1, explain: "Rentabilidade definida ou pré-calculada, como títulos públicos." },
+      { question: "O que é empreendedorismo feminino?", options: ["Equipe só de mulheres", "Negócio p/ público feminino", "Mulheres que gerenciam", "Ação de influencer"], correctIndex: 2, explain: "Empresas criadas e lideradas por mulheres." },
+      { question: "O que é marketing de conteúdo?", options: ["Conteúdo político", "Atrair e engajar público", "Compra de anúncios", "Blog de youtuber"], correctIndex: 1, explain: "Produzir conteúdo relevante para atrair clientes." },
+      { question: "O que é endividamento?", options: ["Pegar empréstimo", "Pagar contas em dia", "Despesas maiores que receitas", "Aumento do salário mínimo"], correctIndex: 2, explain: "Ocorre quando obrigações superam a capacidade de pagamento." },
+      { question: "O que é uma startup?", options: ["Artesanato local", "Música de youtuber", "Série de tecnologia", "Empresa escalável"], correctIndex: 3, explain: "Negócio inovador com potencial de rápido crescimento." },
+      { question: "O que é imposto de renda?", options: ["Imposto sobre videogames", "Imposto sobre importados", "Imposto municipal", "Imposto sobre renda"], correctIndex: 3, explain: "Tributo cobrado sobre a renda de pessoas e empresas." },
+      { question: "O que é empreendedorismo digital?", options: ["Canal no YouTube", "Político em redes", "Negócio na internet", "Loja de rua"], correctIndex: 2, explain: "Usa a internet e tecnologia como base do negócio." },
+      { question: "O que é microcrédito?", options: ["Empréstimo pequeno", "Grandes empresas", "R$1 milhão", "Taxa do BC"], correctIndex: 0, explain: "Crédito de pequeno valor para microempreendedores." },
+      { question: "O que é risco em investimentos?", options: ["Possibilidade de perder dinheiro", "Investimento do BC", "Lucro garantido", "Imposto"], correctIndex: 0, explain: "Quanto maior o retorno potencial, maior o risco." },
+      { question: "O que é taxa Selic?", options: ["Privatizar estatais", "Taxa básica de juros", "Juros de bancos", "Valor pago a youtubers"], correctIndex: 1, explain: "É a taxa básica de juros que orienta o crédito no país." }
     ];
 
-
+    // adiciona _id original para rastrear
+    const questionBank = questionBankRaw.map((q, i) => ({ ...q, _id: i }));
 
     const quizSize = 12;
 
-    /* ============================
+    /* =========================
        DOM refs
-       ============================ */
+       ========================= */
     const imgPlay = document.getElementById('imgPlay');
     const imgRanking = document.getElementById('imgRanking');
     const soundBtn = document.getElementById('soundBtn');
@@ -590,7 +634,6 @@
     const rankingEl = document.getElementById('ranking');
 
     const speechEl = document.getElementById('speech');
-    const qCounterEl = document.getElementById('qCounter');
     const timerEl = document.getElementById('timer');
     const progressBar = document.getElementById('progressBar');
     const questionEl = document.getElementById('question');
@@ -613,9 +656,9 @@
     const titleImg = document.getElementById('titleImg');
     const backToMenuBtn = document.getElementById('backToMenuBtn');
 
-    /* ============================
+    /* =========================
        Estado do jogo
-       ============================ */
+       ========================= */
     let quizData = [];
     let currentQuestion = 0;
     let score = 0;
@@ -626,10 +669,12 @@
     let timerHandle = null;
     let typingHandle = null;
     let correctCount = 0;
+    // status: null | 'correct' | 'wrong' for each quiz slot (length = quizData.length)
+    let answerStatus = [];
 
-    /* ============================
-       Utilitários
-       ============================ */
+    /* =========================
+       Utilitários: shuffle Fisher-Yates
+       ========================= */
     function shuffleArrayFisherYates(array) {
       const a = array.slice();
       for (let i = a.length - 1; i > 0; i--) {
@@ -639,88 +684,124 @@
       return a;
     }
 
+    /* =========================
+       Geração do quiz
+       - preserva _id original (já no questionBank)
+       ========================= */
     function generateQuiz() {
+      // shuffle full bank, then slice
       const copy = shuffleArrayFisherYates(questionBank);
-      return copy.slice(0, quizSize);
+      const chosen = copy.slice(0, quizSize).map(q => ({ ...q })); // shallow copy
+      // init answerStatus
+      answerStatus = new Array(chosen.length).fill(null);
+      return chosen;
     }
 
+    /* =========================
+       Progress bar: usa answerStatus para mostrar moeda/x
+       ========================= */
     function updateProgress() {
       progressBar.innerHTML = '';
       const total = quizData.length || quizSize;
       for (let i = 0; i < total; i++) {
         const d = document.createElement('div'); d.className = 'coin';
-        if (i < answeredCount) d.classList.add('active');
+        // default coin background set by CSS
+        if (answerStatus[i] === 'correct') {
+          d.classList.add('active');
+          // leave background as moeda.png (CSS)
+        } else if (answerStatus[i] === 'wrong') {
+          d.classList.add('wrong'); // CSS will set background to x.png
+        } else {
+          // not answered: keep faded opacity (.coin default)
+          d.style.opacity = '.24';
+        }
         progressBar.appendChild(d);
       }
     }
 
-    function updateScoreDisplay() { scoreEl.textContent = `Pontuação: ${score} | Multiplicador: x${multiplier.toFixed(2)}`; }
+    /* =========================
+       Miss tracking:
+       - saveMissedQuestion increments counter in Firestore or localStorage
+       ========================= */
+    async function saveMissedQuestion(q) {
+      if (!q) return;
+      const id = String(q._id);
+      if (firebaseAvailable && db) {
+        try {
+          // compat FieldValue.increment
+          const inc = firebase.firestore.FieldValue.increment(1);
+          await db.collection('missed_questions').doc(id).set({
+            question: q.question,
+            misses: inc,
+            lastMiss: Date.now()
+          }, { merge: true });
+          return true;
+        } catch (err) {
+          console.warn('Erro salvar miss remoto, salvando localmente:', err);
+          // fallback local
+        }
+      }
+      // local fallback
+      const key = 'missed_questions_local';
+      const map = JSON.parse(localStorage.getItem(key) || '{}');
+      map[id] = map[id] || { question: q.question, misses: 0, lastMiss: 0 };
+      map[id].misses = (map[id].misses || 0) + 1;
+      map[id].lastMiss = Date.now();
+      localStorage.setItem(key, JSON.stringify(map));
+      return true;
+    }
 
-    /* typing + balão que expande enquanto digita */
+    /* fetch most missed (remote or local) */
+    async function fetchMostMissed(limit = 20) {
+      if (firebaseAvailable && db) {
+        try {
+          const snap = await db.collection('missed_questions').orderBy('misses', 'desc').limit(limit).get();
+          return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (err) {
+          console.warn('Erro buscar missed remoto:', err);
+        }
+      }
+      const map = JSON.parse(localStorage.getItem('missed_questions_local') || '{}');
+      const arr = Object.keys(map).map(k => ({ id: k, ...map[k] }));
+      arr.sort((a, b) => (b.misses || 0) - (a.misses || 0));
+      return arr.slice(0, limit);
+    }
+    // expõe para console se quiser
+    window.fetchMostMissed = fetchMostMissed;
+
+    /* =========================
+       Typing / speech balloon (mantive animação; final balão um pouco maior)
+       ========================= */
     function typeSpeech(text, onDone) {
       stopTyping();
       speechEl.style.overflow = 'hidden';
-      speechEl.style.maxHeight = '28px';
+      speechEl.style.maxHeight = '20px';
       speechEl.style.padding = '6px';
       speechEl.textContent = '';
-
       let i = 0;
       typingHandle = setInterval(() => {
         speechEl.textContent += text.charAt(i) || '';
         i++;
-        // expande conforme caracteres escritos
-        const newH = Math.min(48 + Math.floor(i / 18) * 18, 420);
+        const approxLines = Math.ceil((i || 1) / 36);
+        const newH = Math.min(48 + (approxLines * 22), 520);
         speechEl.style.maxHeight = newH + 'px';
-        if (newH > 100) speechEl.style.padding = '10px';
+        if (newH > 100) speechEl.style.padding = '12px';
         speechEl.scrollTop = speechEl.scrollHeight;
         if (i > text.length) {
-          clearInterval(typingHandle);
-          typingHandle = null;
-          speechEl.style.maxHeight = Math.min(48 + Math.ceil(text.length / 18) * 18, 420) + 'px';
-          speechEl.style.padding = '10px';
+          clearInterval(typingHandle); typingHandle = null;
+          const finalLines = Math.ceil((text.length || 1) / 36);
+          const finalH = Math.min(48 + (finalLines * 22) + 24, 560);
+          speechEl.style.maxHeight = finalH + 'px';
+          speechEl.style.padding = '12px';
           if (typeof onDone === 'function') onDone();
         }
       }, 24);
     }
     function stopTyping() { if (typingHandle) { clearInterval(typingHandle); typingHandle = null; } }
 
-    function openExplainBox() {
-      explainBox.style.display = 'block';
-      requestAnimationFrame(() => {
-        explainBox.style.maxHeight = '400px';
-        explainBox.style.padding = '10px';
-      });
-      playSound(explainOpenSound);
-    }
-    function closeExplainBox() {
-      explainBox.style.maxHeight = '0';
-      explainBox.style.padding = '0 10px';
-      setTimeout(() => { explainBox.style.display = 'none'; }, 260);
-    }
-
-    /* confetti */
-    function showConfetti() {
-      for (let i = 0; i < 18; i++) {
-        const c = document.createElement('div');
-        c.className = 'confete';
-        c.style.left = (window.innerWidth / 2 + (Math.random() * 260 - 130)) + 'px';
-        c.style.top = (80 + Math.random() * 40) + 'px';
-        c.style.background = ['#ff0', '#f0a', '#0ff', '#0f0', '#f90'][Math.floor(Math.random() * 5)];
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 1800);
-      }
-    }
-
-    function updateStreakIndicator() {
-      const stars = Array.from(document.querySelectorAll('.st-star'));
-      let lit = streak % 3;
-      if (streak > 0 && lit === 0) lit = 3;
-      stars.forEach((s, idx) => { if (idx < lit) s.classList.add('active'); else s.classList.remove('active'); });
-    }
-
-    /* ============================
-       Menu interactions
-       ============================ */
+    /* =========================
+       Sounds unlock, menu actions
+       ========================= */
     imgPlay.addEventListener('click', () => { playSound(clickSound); tryUnlockAudio(); startGame(); });
     imgRanking.addEventListener('click', () => { playSound(clickSound); showRanking(); });
     soundBtn.addEventListener('click', () => {
@@ -730,9 +811,9 @@
       playSound(clickSound);
     });
 
-    /* ============================
-       Iniciar jogo / carregar pergunta
-       ============================ */
+    /* =========================
+       Start / load question
+       ========================= */
     function startGame() {
       titleImg.style.display = 'none';
       menuEl.style.display = 'none';
@@ -757,28 +838,24 @@
       closeExplainBox(); explainText.textContent = '';
 
       const q = quizData[currentQuestion];
-      // questionEl oculto visualmente, mantido para acessibilidade
       questionEl.textContent = '';
-
       optionsEl.innerHTML = '';
 
-      const idx = shuffleArrayFisherYates([0, 1, 2, 3]);
-      idx.forEach(origIndex => {
+      // embaralhar alternativas (mantendo referencia ao índice original)
+      const optOrder = shuffleArrayFisherYates([0, 1, 2, 3]);
+      optOrder.forEach(origIndex => {
         const btn = document.createElement('button');
         btn.className = 'option';
         btn.type = 'button';
         btn.textContent = q.options[origIndex];
-        btn.dataset.orig = origIndex;
+        btn.dataset.orig = origIndex; // original index in q.options
         btn.addEventListener('click', () => selectAnswer(origIndex, q.correctIndex));
         optionsEl.appendChild(btn);
       });
 
-      // garante balão fechado antes de digitar
-      speechEl.style.maxHeight = '28px';
-      speechEl.style.padding = '6px';
+      // speech typing; quando terminar, começa o timer
+      speechEl.style.maxHeight = ''; speechEl.style.padding = '';
       speechEl.textContent = '';
-
-      // Mascote fala (typing). Timer começa quando terminar.
       typeSpeech(q.question, () => {
         questionEl.textContent = q.question;
         startTimer();
@@ -786,9 +863,9 @@
       });
     }
 
-    /* ============================
+    /* =========================
        Timer
-       ============================ */
+       ========================= */
     function startTimer() {
       clearInterval(timerHandle);
       const total = 20; let elapsed = 0;
@@ -800,16 +877,18 @@
         timerEl.textContent = `Tempo: ${timeLeft}s`;
         if (elapsed >= total) {
           clearInterval(timerHandle);
-          selectAnswer(null, quizData[currentQuestion].correctIndex);
+          // timeout counts as wrong
+          selectAnswer(null, quizData[currentQuestion].correctIndex, /*isTimeout*/ true);
         }
       }, 1000);
     }
     function stopTimer() { if (timerHandle) { clearInterval(timerHandle); timerHandle = null; } }
 
-    /* ============================
-       Processar resposta
-       ============================ */
-    function selectAnswer(selectedIndex, correctIndex) {
+    /* =========================
+       selectAnswer: marca status e atualiza progress
+       - se errado ou timeout => mostra x.png nessa posição e contabiliza miss
+    */
+    async function selectAnswer(selectedIndex, correctIndex, isTimeout = false) {
       stopTimer();
       const buttons = Array.from(optionsEl.querySelectorAll('.option'));
       buttons.forEach(b => b.disabled = true);
@@ -826,7 +905,9 @@
         mascoteEl.classList.add('wrong'); setTimeout(() => mascoteEl.classList.remove('wrong'), 800);
       }
 
-      const prevMultiplier = multiplier;
+      let prevMultiplier = multiplier;
+      const q = quizData[currentQuestion];
+
       if (selectedIndex !== null && selectedIndex === correctIndex) {
         streak++;
         multiplier = 1 + Math.floor(streak / 3) * 0.25;
@@ -835,9 +916,14 @@
         correctCount++;
         playSound(correctSound); playSound(coinSound);
         if (multiplier > prevMultiplier) { playSound(multiplierUpSound); showConfetti(); }
+        answerStatus[currentQuestion] = 'correct';
       } else {
+        // wrong or timeout
         streak = 0; multiplier = 1;
         playSound(wrongSound);
+        answerStatus[currentQuestion] = 'wrong';
+        // record missed question
+        saveMissedQuestion(q).catch(() => { });
       }
 
       answeredCount++;
@@ -845,14 +931,15 @@
       updateScoreDisplay();
       updateStreakIndicator();
 
-      const q = quizData[currentQuestion];
       showExplainBtn.style.display = (q.explain && q.explain.trim()) ? 'inline-block' : 'none';
       explainText.textContent = q.explain || '';
 
       nextBtn.disabled = false;
     }
 
-    /* Próxima */
+    /* =========================
+       next
+    */
     nextBtn.addEventListener('click', () => {
       playSound(nextSound);
       currentQuestion++;
@@ -860,38 +947,56 @@
       else showResult();
     });
 
-    /* Explicação */
+    /* =========================
+       Explanation open/close
+    */
     showExplainBtn.addEventListener('click', () => openExplainBox());
     closeExplainBtn.addEventListener('click', () => closeExplainBox());
+    function openExplainBox() { explainBox.style.display = 'block'; requestAnimationFrame(() => { explainBox.style.maxHeight = '400px'; explainBox.style.padding = '10px'; }); playSound(explainOpenSound); }
+    function closeExplainBox() { explainBox.style.maxHeight = '0'; explainBox.style.padding = '0 10px'; setTimeout(() => { explainBox.style.display = 'none'; }, 260); }
 
-    /* Resultado */
+    /* =========================
+       Result: calcula medalha; mostra input para salvar
+    */
     function showResult() {
       stopTimer();
       quizCard.classList.add('hidden');
       resultEl.classList.remove('hidden');
 
-      const percent = Math.round((correctCount / quizData.length) * 100);
-      finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${percent}%)`;
-      medalDiv.innerHTML = '';
-
-      let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
-      let insertPos = list.findIndex(e => score > e.score);
-      if (insertPos === -1) insertPos = list.length;
-
-      let medalFile = null;
-      if (insertPos === 0) medalFile = 'medal_gold.png';
-      else if (insertPos === 1) medalFile = 'medal_silver.png';
-      else if (insertPos === 2) medalFile = 'medal_bronze.png';
-
-      if (medalFile) {
-        const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img);
-        playSound(winSound);
-      }
-      setTimeout(() => playerNameInput.focus(), 200);
+      (async () => {
+        const list = await fetchRankingRemote();
+        let insertPos = list.findIndex(e => score > e.score);
+        if (insertPos === -1) insertPos = list.length;
+        let medalFile = null;
+        if (insertPos === 0) medalFile = 'medal_gold.png';
+        else if (insertPos === 1) medalFile = 'medal_silver.png';
+        else if (insertPos === 2) medalFile = 'medal_bronze.png';
+        if (medalFile) { const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img); playSound(winSound); }
+        finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${Math.round((correctCount / quizData.length) * 100)}%)`;
+        setTimeout(() => playerNameInput.focus(), 200);
+      })();
     }
 
-    /* Salvar ranking */
-    function saveRanking(name, pontos) {
+    /* =========================
+       Ranking save (remote with fallback local)
+    */
+    async function saveRankingRemote(name, pontos) {
+      if (!name || !name.trim()) return { ok: false, reason: 'empty' };
+      if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
+      if (!firebaseAvailable || !db) return saveRankingLocal(name, pontos);
+
+      try {
+        const q = await db.collection('ranking').where('name', '==', name).limit(1).get();
+        if (!q.empty) return { ok: false, reason: 'duplicate' };
+        await db.collection('ranking').add({ name: name.trim(), score: Number(pontos) || 0, date: Date.now() });
+        return { ok: true };
+      } catch (err) {
+        console.error('Erro salvar ranking remoto:', err);
+        return saveRankingLocal(name, pontos, { fallback: true, error: err.message });
+      }
+    }
+
+    function saveRankingLocal(name, pontos, options = {}) {
       if (!name || !name.trim()) return { ok: false, reason: 'empty' };
       if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
       let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
@@ -900,17 +1005,28 @@
       list.sort((a, b) => b.score - a.score || a.date - b.date);
       list = list.slice(0, 10);
       localStorage.setItem('quiz_ranking_v2', JSON.stringify(list));
+      if (options.fallback) console.warn('Salvo local por fallback:', options.error || '');
       return { ok: true };
     }
 
-    saveScoreBtn.addEventListener('click', () => {
+    async function fetchRankingRemote() {
+      if (!firebaseAvailable || !db) return fetchRankingLocal();
+      try {
+        const snap = await db.collection('ranking').orderBy('score', 'desc').orderBy('date', 'asc').limit(10).get();
+        return snap.docs.map(d => ({ name: d.data().name, score: d.data().score, date: d.data().date }));
+      } catch (err) { console.warn('Erro fetch ranking remoto:', err); return fetchRankingLocal(); }
+    }
+    function fetchRankingLocal() { return JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]').slice(0, 10); }
+
+    saveScoreBtn.addEventListener('click', async () => {
       const name = playerNameInput.value;
-      const res = saveRanking(name, score);
+      const res = await saveRankingRemote(name, score);
       if (!res.ok) {
-        if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); }
-        else if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); }
-        else if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); }
-        return;
+        if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); return; }
+        if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); return; }
+        if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); return; }
+        alert('Erro ao salvar no ranking. Tente novamente mais tarde.');
+        console.error(res); return;
       }
       playerNameInput.value = '';
       resultEl.classList.add('hidden');
@@ -918,7 +1034,7 @@
       titleImg.style.display = 'block';
     });
 
-    /* replay / ver ranking / voltar ao menu */
+    /* replay / ranking / voltar */
     replayBtn.addEventListener('click', () => {
       playSound(clickSound);
       resultEl.classList.add('hidden');
@@ -929,23 +1045,22 @@
       loadQuestion();
     });
     viewRankingBtn.addEventListener('click', () => showRanking());
-    backToMenuBtn.addEventListener('click', () => {
-      resultEl.classList.add('hidden');
-      menuEl.style.display = 'block';
-      titleImg.style.display = 'block';
-    });
+    backToMenuBtn.addEventListener('click', () => { resultEl.classList.add('hidden'); menuEl.style.display = 'block'; titleImg.style.display = 'block'; });
 
-    /* Ranking: renderizar */
-    function showRanking() {
+    /* =========================
+       showRanking (render)
+    */
+    async function showRanking() {
       menuEl.style.display = 'none';
       quizCard.classList.add('hidden');
       resultEl.classList.add('hidden');
       rankingEl.classList.remove('hidden');
 
-      const list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
+      const list = await fetchRankingRemote();
       rankingList.innerHTML = '';
       list.forEach((entry, i) => {
-        const li = document.createElement('li'); li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px'; li.style.padding = '8px'; li.style.borderRadius = '8px'; li.style.marginBottom = '6px'; li.style.background = 'rgba(0,0,0,0.03)';
+        const li = document.createElement('li'); li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px';
+        li.style.padding = '8px'; li.style.borderRadius = '8px'; li.style.marginBottom = '6px'; li.style.background = 'rgba(0,0,0,0.03)';
         const left = document.createElement('div'); left.style.display = 'flex'; left.style.alignItems = 'center'; left.style.gap = '8px';
         if (i === 0) { const img = new Image(); img.src = 'assets/medal_gold.png'; img.style.width = '28px'; left.appendChild(img); }
         else if (i === 1) { const img = new Image(); img.src = 'assets/medal_silver.png'; img.style.width = '28px'; left.appendChild(img); }
@@ -955,12 +1070,9 @@
         li.appendChild(left); li.appendChild(scoreSpan); rankingList.appendChild(li);
       });
     }
-    backBtn.addEventListener('click', () => {
-      rankingEl.classList.add('hidden');
-      menuEl.style.display = 'block';
-    });
+    backBtn.addEventListener('click', () => { rankingEl.classList.add('hidden'); menuEl.style.display = 'block'; });
 
-    /* atalhos teclado */
+    /* keyboard shortcuts */
     window.addEventListener('keydown', (e) => {
       if (!quizCard.classList.contains('hidden')) {
         const key = e.key.toLowerCase();
@@ -978,7 +1090,14 @@
       }
     });
 
-    /* Inicial UI */
+    /* helpers */
+    function updateScoreDisplay() { scoreEl.textContent = `Pontuação: ${score} | Multiplicador: x${multiplier.toFixed(2)}`; }
+    function showConfetti() { for (let i = 0; i < 18; i++) { const c = document.createElement('div'); c.className = 'confete'; c.style.left = (window.innerWidth / 2 + (Math.random() * 260 - 130)) + 'px'; c.style.top = (80 + Math.random() * 40) + 'px'; c.style.background = ['#ff0', '#f0a', '#0ff', '#0f0', '#f90'][Math.floor(Math.random() * 5)]; document.body.appendChild(c); setTimeout(() => c.remove(), 1800); } }
+    function updateStreakIndicator() { const stars = Array.from(document.querySelectorAll('.st-star')); let lit = streak % 3; if (streak > 0 && lit === 0) lit = 3; stars.forEach((s, idx) => { if (idx < lit) s.classList.add('active'); else s.classList.remove('active'); }); }
+
+    /* =========================
+       Inicial UI
+    */
     menuEl.style.display = 'block';
     quizCard.classList.add('hidden');
     resultEl.classList.add('hidden');
@@ -987,6 +1106,12 @@
     updateScoreDisplay();
     updateStreakIndicator();
 
+    /* =========================
+       Nota sobre randomização das perguntas:
+       - Perguntas: usei Fisher–Yates (shuffleArrayFisherYates) sobre o banco completo e depois slice(0, quizSize).
+       - Alternativas: embaralhadas por questão também via Fisher–Yates.
+       -> Isso gera sorteio justo e sem viés.
+    */
   </script>
 </body>
 
