@@ -526,14 +526,8 @@
     <div id="ranking" class="card hidden" aria-live="polite">
       <h2>Desafios — Economistas Famosos (Top 5)</h2>
       <ul id="rankingList" style="list-style:none;padding:0;margin:0"></ul>
-
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <button id="backBtn" class="small-btn">Voltar</button>
-      </div>
-
-      <div id="missedContainer" style="margin-top:12px;display:none">
-        <h3>Questões mais erradas (admin)</h3>
-        <ol id="missedList"></ol>
       </div>
     </div>
   </div>
@@ -571,9 +565,6 @@
     const mascoteEl = document.getElementById('mascote');
     const titleImg = document.getElementById('titleImg');
     const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const viewMissedBtn = document.getElementById('viewMissedBtn');
-    const missedContainer = document.getElementById('missedContainer');
-    const missedList = document.getElementById('missedList');
 
     /* =========================
        Firebase init (compat)
@@ -602,7 +593,7 @@
           .then(() => console.log("Firestore (missed_questions) conectado e pronto."))
           .catch(err => console.warn("⚠️ Erro ao acessar Firestore (missed_questions):", err));
 
-        // tentar autenticação anônima (não é obrigatória para salvar misses — mas útil)
+        // tentar autenticação anônima (opcional)
         if (firebase.auth && firebase.auth().setPersistence) {
           try {
             firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
@@ -613,11 +604,8 @@
         }
         if (firebase.auth) {
           firebase.auth().onAuthStateChanged(user => {
-            if (user) console.log('Firebase Auth: signed in (uid):', user.uid);
-            else {
-              firebase.auth().signInAnonymously()
-                .then(cred => console.log('Signed in anonymously:', cred.user && cred.user.uid))
-                .catch(err => console.warn('Erro signInAnonymously:', err));
+            if (!user) {
+              firebase.auth().signInAnonymously().catch(err => console.warn('Erro signInAnonymously:', err));
             }
           });
         }
@@ -706,15 +694,15 @@
     const quizSize = 12;
 
     /* =========================
-       Ranking fixo (5 desafios)
-       (Nomes e pontuações pré-definidas — jogador tenta superá-los)
+       Ranking fixo calibrado para máximo = 12 acertos => 178 pontos
+       Proporções: 100%, 85%, 70%, 55%, 40%
     */
     const fixedRanking = [
-      { name: "Adam Smith", score: 120 },       // exemplo de pontuação
-      { name: "John Maynard Keynes", score: 105 },
-      { name: "Milton Friedman", score: 95 },
-      { name: "Amartya Sen", score: 85 },
-      { name: "Paul Samuelson", score: 72 }
+      { name: "Adam Smith", score: 178 },       // 100% -> exige 12/12
+      { name: "John Maynard Keynes", score: 151 }, // ~85%
+      { name: "Milton Friedman", score: 125 },  // ~70%
+      { name: "Amartya Sen", score: 98 },       // ~55%
+      { name: "Paul Samuelson", score: 71 }     // ~40%
     ];
 
     /* =========================
@@ -759,10 +747,7 @@
       }
     }
 
-    /* =========================
-       Firestore: salvar missed question (increment) com fallback local
-       (mantive sua lógica original)
-    */
+    /* Firestore: salvar missed question (increment) com fallback local */
     async function saveMissedQuestion(q) {
       if (!q) return;
       const id = String(q._id);
@@ -787,20 +772,6 @@
       localStorage.setItem(key, JSON.stringify(map));
       return true;
     }
-
-    async function fetchMostMissed(limit = 20) {
-      if (firebaseAvailable && db) {
-        try {
-          const snap = await db.collection('missed_questions').orderBy('misses', 'desc').limit(limit).get();
-          return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        } catch (err) { console.warn('Erro buscar missed remoto:', err); }
-      }
-      const map = JSON.parse(localStorage.getItem('missed_questions_local') || '{}');
-      const arr = Object.keys(map).map(k => ({ id: k, ...map[k] }));
-      arr.sort((a, b) => (b.misses || 0) - (a.misses || 0));
-      return arr.slice(0, limit);
-    }
-    window.fetchMostMissed = fetchMostMissed;
 
     /* typing balloon */
     function typeSpeech(text, onDone) {
@@ -950,10 +921,9 @@
       stopTimer();
       quizCard.classList.add('hidden'); resultEl.classList.remove('hidden');
 
-      // calcula posição entre fixedRanking
       const list = fixedRanking.slice().sort((a, b) => b.score - a.score);
       let insertPos = list.findIndex(e => score > e.score);
-      if (insertPos === -1) insertPos = list.length; // se não superou ninguém, posição final
+      if (insertPos === -1) insertPos = list.length; // se não superou ninguém
 
       let medalFile = null;
       if (insertPos === 0) medalFile = 'medal_gold.png';
@@ -965,12 +935,10 @@
 
       finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${Math.round((correctCount / quizData.length) * 100)}%)`;
 
-      // dica ao jogador: se quiser ser #1 precise acertar todas (opcional)
       if (insertPos === 0) {
         const msg = document.createElement('div'); msg.style.fontWeight = '700'; msg.style.marginTop = '6px'; msg.textContent = 'Parabéns — você superou todos os desafios!';
         resultEl.appendChild(msg);
       } else {
-        // mostra quem você não superou
         const nextToBeat = list[insertPos] || null;
         if (nextToBeat) {
           const msg = document.createElement('div'); msg.style.marginTop = '6px';
@@ -978,15 +946,12 @@
           resultEl.appendChild(msg);
         }
       }
-
-      // foco para re-jogar
       setTimeout(() => replayBtn.focus(), 200);
     }
 
     /* replay / ranking / voltar */
     replayBtn.addEventListener('click', () => {
       playSound(clickSound); resultEl.classList.add('hidden'); quizCard.classList.remove('hidden');
-      // limpa mensagens extras inseridas por showResult (mantemos medalDiv)
       Array.from(resultEl.querySelectorAll('div')).forEach(div => {
         if (div !== medalDiv && div !== finalScoreText) div.remove();
       });
@@ -1017,36 +982,9 @@
     async function showRanking() {
       menuEl.style.display = 'none'; quizCard.classList.add('hidden'); resultEl.classList.add('hidden'); rankingEl.classList.remove('hidden');
       renderFixedRanking();
-      // reset missed UI
-      missedContainer.style.display = 'none';
-      missedList.innerHTML = '';
     }
 
     backBtn.addEventListener('click', () => { rankingEl.classList.add('hidden'); menuEl.style.display = 'block'; });
-
-    /* botão para mostrar as questões mais erradas (apenas leitura, admin) */
-    viewMissedBtn.addEventListener('click', async () => {
-      missedContainer.style.display = 'block';
-      missedList.innerHTML = '<li>Carregando...</li>';
-      try {
-        const arr = await fetchMostMissed(20);
-        missedList.innerHTML = '';
-        if (!arr || arr.length === 0) {
-          missedList.innerHTML = '<li>Nenhuma informação registrada ainda.</li>';
-          return;
-        }
-        arr.forEach(item => {
-          const li = document.createElement('li');
-          const misses = item.misses || 0;
-          const qtxt = item.question || '(sem texto)';
-          li.textContent = `${misses}x — ${qtxt}`;
-          missedList.appendChild(li);
-        });
-      } catch (err) {
-        missedList.innerHTML = '<li>Erro ao buscar dados.</li>';
-        console.warn(err);
-      }
-    });
 
     /* keyboard shortcuts */
     window.addEventListener('keydown', (e) => {
@@ -1075,10 +1013,6 @@
     menuEl.style.display = 'block'; quizCard.classList.add('hidden'); resultEl.classList.add('hidden'); rankingEl.classList.add('hidden');
     updateProgress(); updateScoreDisplay(); updateStreakIndicator();
 
-    /* Observação sobre randomização (justificação)
-       - Perguntas: uso Fisher–Yates no banco inteiro e depois slice(0, quizSize).
-       - Alternativas: embaralho por questão (Fisher–Yates) antes de renderizar.
-    */
   </script>
 </body>
 
