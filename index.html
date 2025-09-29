@@ -172,9 +172,6 @@
       padding-right: 12px;
     }
 
-    /* speech pode expandir até a margem direita, sem grudar */
-
-    /* mascote sem fundo branco (assume imagem com transparência). apenas garantimos background transparent via CSS */
     #mascote {
       width: 88px;
       height: auto;
@@ -197,7 +194,6 @@
       }
     }
 
-    /* timer separado: logo abaixo do mascote — fundo TRANSPARENTE e texto com sombreamento para legibilidade sobre o fundo animado */
     .timer-box {
       font-weight: 800;
       color: #d97706;
@@ -207,30 +203,28 @@
       padding: 6px 8px;
       border-radius: 8px;
       background: transparent;
-      /* transparente conforme pediu */
       text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.18);
       width: 100%;
       box-sizing: border-box;
     }
 
-    /* balão (direito): largura dinâmica conforme conteúdo */
-    .speech{
-      display:inline-block;
-      width:auto;
-      max-width:100%;
-      background:#ffffff;
-      border:2px solid rgba(0,0,0,0.08);
-      padding:12px;
-      border-radius:12px;
-      font-size:18px;
-      font-weight:400; /* será atualizada para bold ao final da digitação */
-      line-height:1.25;
-      box-shadow:0 10px 28px rgba(0,0,0,0.06);
-      overflow:hidden;
-      transition:max-height 220ms ease, padding 160ms ease, font-weight 200ms ease, font-size 200ms ease;
-      color:#111;
-      word-wrap:break-word;
-      box-sizing:border-box;
+    .speech {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      background: #ffffff;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.25;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: max-height 220ms ease, padding 160ms ease, font-weight 200ms ease, font-size 200ms ease;
+      color: #111;
+      word-wrap: break-word;
+      box-sizing: border-box;
     }
 
     .progress {
@@ -448,13 +442,21 @@
     .hidden {
       display: none
     }
+
+    .small-btn {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: transparent;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- título fora -->
+    <!-- título -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;">
       <img id="titleImg" src="assets/titulo.png" alt="Título"
         style="width:360px;max-width:86%;display:block;margin:6px auto 10px">
@@ -463,7 +465,7 @@
     <!-- MENU -->
     <div id="menu" class="card stardew-menu" aria-label="Menu principal">
       <button id="imgPlay" class="menu-img-btn" aria-label="Jogar"><img src="assets/jogar.png" alt="Jogar"></button>
-      <button id="imgRanking" class="menu-img-btn" aria-label="Ranking"><img src="assets/ranking.png"
+      <button id="imgRanking" class="menu-img-btn" aria-label="Desafios (Ranking fixo)"><img src="assets/ranking.png"
           alt="Ranking"></button>
       <div class="menu-row"><button id="soundBtn" class="icon-btn" aria-label="Som"><img id="soundIcon"
             src="assets/som_ligado.png" alt="Som ligado"></button></div>
@@ -471,7 +473,6 @@
 
     <!-- QUIZ -->
     <div id="quizCard" class="card quiz-card hidden" role="application" aria-live="polite">
-      <!-- topo: coluna esquerda (mascote + timer) e coluna direita (balão) -->
       <div class="top-grid">
         <div class="left-col">
           <img id="mascote" src="assets/mascote.png" alt="Mascote">
@@ -489,8 +490,8 @@
 
         <div id="explainBox" aria-hidden="true">
           <div id="explainText"></div>
-          <div style="text-align:right;margin-top:8px"><button id="closeExplainBtn"
-              class="btn btn-ghost">Fechar</button></div>
+          <div style="text-align:right;margin-top:8px"><button id="closeExplainBtn" class="small-btn">Fechar</button>
+          </div>
         </div>
 
         <div
@@ -502,42 +503,44 @@
               <div class="st-star" data-i="2"></div>
               <div class="st-star" data-i="3"></div>
             </div>
-            <button id="showExplainBtn" class="btn btn-ghost" style="display:none">Explicação</button>
-            <button id="nextBtn" class="btn btn-primary" disabled>Próxima</button>
+            <button id="showExplainBtn" class="small-btn" style="display:none">Explicação</button>
+            <button id="nextBtn" class="small-btn" disabled>Próxima</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- RESULT -->
+    <!-- RESULT (sem salvar ranking remoto) -->
     <div id="result" class="card hidden" aria-live="polite">
       <h2>Fim de Jogo!</h2>
       <p id="finalScore">Sua pontuação final: 0 pontos</p>
       <div id="medal"></div>
-      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-        <input type="text" id="playerName" placeholder="Digite seu nome (2-20 chars)"
-          style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc">
-        <button id="saveScoreBtn" class="btn btn-primary">Salvar</button>
-      </div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button id="replayBtn" class="btn btn-secondary">Jogar Novamente</button>
-        <button id="viewRankingBtn" class="btn btn-ghost">Ver Ranking</button>
-        <button id="backToMenuBtn" class="btn btn-ghost">Voltar ao Menu</button>
+        <button id="replayBtn" class="small-btn">Jogar Novamente</button>
+        <button id="viewRankingBtn" class="small-btn">Ver Desafios</button>
+        <button id="backToMenuBtn" class="small-btn">Voltar ao Menu</button>
       </div>
     </div>
 
-    <!-- RANKING -->
+    <!-- RANKING FIXO (Desafios) -->
     <div id="ranking" class="card hidden" aria-live="polite">
-      <h2>Ranking (Top 10)</h2>
+      <h2>Desafios — Economistas Famosos (Top 5)</h2>
       <ul id="rankingList" style="list-style:none;padding:0;margin:0"></ul>
-      <div style="margin-top:12px;display:flex;gap:8px"><button id="backBtn" class="btn btn-primary">Voltar</button>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button id="backBtn" class="small-btn">Voltar</button>
+      </div>
+
+      <div id="missedContainer" style="margin-top:12px;display:none">
+        <h3>Questões mais erradas (admin)</h3>
+        <ol id="missedList"></ol>
       </div>
     </div>
   </div>
 
   <script>
     /* =========================
-       DOM refs (declarar ANTES da inicialização do Firebase / manipulação)
+       DOM refs (ajustados)
     */
     const imgPlay = document.getElementById('imgPlay');
     const imgRanking = document.getElementById('imgRanking');
@@ -559,8 +562,6 @@
     const explainBox = document.getElementById('explainBox');
     const explainText = document.getElementById('explainText');
     const closeExplainBtn = document.getElementById('closeExplainBtn');
-    const playerNameInput = document.getElementById('playerName');
-    const saveScoreBtn = document.getElementById('saveScoreBtn');
     const finalScoreText = document.getElementById('finalScore');
     const medalDiv = document.getElementById('medal');
     const replayBtn = document.getElementById('replayBtn');
@@ -570,8 +571,9 @@
     const mascoteEl = document.getElementById('mascote');
     const titleImg = document.getElementById('titleImg');
     const backToMenuBtn = document.getElementById('backToMenuBtn');
-
-    try { saveScoreBtn.disabled = false; } catch(e) { console.warn('Não conseguiu habilitar saveScoreBtn', e); }
+    const viewMissedBtn = document.getElementById('viewMissedBtn');
+    const missedContainer = document.getElementById('missedContainer');
+    const missedList = document.getElementById('missedList');
 
     /* =========================
        Firebase init (compat)
@@ -595,12 +597,12 @@
         firebaseAvailable = true;
         console.log('✅ Firebase inicializado (compat)');
 
-        // Teste rápido: verificar conexão
-        db.collection("ranking").limit(1).get()
-          .then(() => console.log("Firestore conectado e pronto."))
-          .catch(err => console.warn("⚠️ Erro ao acessar Firestore (regras/índices?):", err));
+        // Teste rápido: verificar conexão com coleção de missed_questions
+        db.collection("missed_questions").limit(1).get()
+          .then(() => console.log("Firestore (missed_questions) conectado e pronto."))
+          .catch(err => console.warn("⚠️ Erro ao acessar Firestore (missed_questions):", err));
 
-        // Habilitar persistência da auth anônima (compat)
+        // tentar autenticação anônima (não é obrigatória para salvar misses — mas útil)
         if (firebase.auth && firebase.auth().setPersistence) {
           try {
             firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
@@ -609,25 +611,15 @@
             console.warn('setPersistence não suportado nesta build:', e);
           }
         }
-
-        // Autenticação anônima
         if (firebase.auth) {
           firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-              console.log('Firebase Auth: signed in (uid):', user.uid);
-              try { saveScoreBtn.disabled = false; } catch (e) { }
-            } else {
-              try { saveScoreBtn.disabled = true; } catch (e) { }
+            if (user) console.log('Firebase Auth: signed in (uid):', user.uid);
+            else {
               firebase.auth().signInAnonymously()
                 .then(cred => console.log('Signed in anonymously:', cred.user && cred.user.uid))
-                .catch(err => {
-                  console.warn('Erro signInAnonymously:', err);
-                  console.warn('➡️ Verifique se a autenticação anônima está habilitada no Firebase Console');
-                });
+                .catch(err => console.warn('Erro signInAnonymously:', err));
             }
           });
-        } else {
-          console.warn('Firebase Auth não disponível (verifique SDK).');
         }
       }
     } catch (err) {
@@ -636,9 +628,8 @@
     }
 
     /* =========================
-       preload / audio
+       preload / audio (mantido)
     */
-
     const preloadImages = ['assets/tela_fundo.png', 'assets/titulo.png', 'assets/mascote.png', 'assets/moeda.png', 'assets/x.png', 'assets/jogar.png', 'assets/ranking.png', 'assets/som_ligado.png', 'assets/som_desligado.png'];
     preloadImages.forEach(s => { const i = new Image(); i.src = s; });
 
@@ -651,7 +642,6 @@
     const wrongSound = loadAudio('assets/erro.mp3', 0.92, false);
     const nextSound = loadAudio('assets/next.mp3', 0.38, false);
     const winSound = loadAudio('assets/parabens.mp3', 0.9, false);
-    // corrigido: nome do arquivo com .mp3
     const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
     const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
     const clickSound = loadAudio('assets/click.mp3', 0.55, false);
@@ -678,6 +668,9 @@
     }
     document.body.addEventListener('click', tryUnlockAudio, { once: true });
 
+    /* =========================
+       Question bank e quiz size (mantidos)
+    */
     const questionBank = [
       { question: "O que significa a sigla PIB?", options: ["Produto Interno Bruto", "Produto Interno Brasileiro", "Patrimônio de Influenciadores", "Produto de Investimento"], correctIndex: 0, explain: "PIB é a soma de todos os bens e serviços finais produzidos em um país." },
       { question: "Qual a função do Banco Central?", options: ["Garantir pagamentos", "Investir em startups", "Fiscalizar políticos", "Regular juros"], correctIndex: 3, explain: "O BC controla a inflação e garante a estabilidade da moeda." },
@@ -713,6 +706,18 @@
     const quizSize = 12;
 
     /* =========================
+       Ranking fixo (5 desafios)
+       (Nomes e pontuações pré-definidas — jogador tenta superá-los)
+    */
+    const fixedRanking = [
+      { name: "Adam Smith", score: 120 },       // exemplo de pontuação
+      { name: "John Maynard Keynes", score: 105 },
+      { name: "Milton Friedman", score: 95 },
+      { name: "Amartya Sen", score: 85 },
+      { name: "Paul Samuelson", score: 72 }
+    ];
+
+    /* =========================
        Estado do jogo
     */
     let quizData = [];
@@ -727,16 +732,13 @@
     let correctCount = 0;
     let answerStatus = [];
 
-    /* util shuffle */
     function shuffleArrayFisherYates(array) {
       const a = array.slice();
-      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; }
       return a;
     }
 
-    /* generate quiz: atribui _id, embaralha e escolhe até quizSize (ou menos, se banco estiver menor) */
     function generateQuiz() {
-      // marca id original para cada pergunta (útil para salvar misses)
       const withId = questionBank.map((q, idx) => ({ ...q, _id: idx }));
       const copy = shuffleArrayFisherYates(withId);
       const take = Math.min(quizSize, copy.length);
@@ -757,7 +759,10 @@
       }
     }
 
-    /* Firestore: salvar missed question (increment) com fallback local */
+    /* =========================
+       Firestore: salvar missed question (increment) com fallback local
+       (mantive sua lógica original)
+    */
     async function saveMissedQuestion(q) {
       if (!q) return;
       const id = String(q._id);
@@ -767,7 +772,7 @@
           await db.collection('missed_questions').doc(id).set({
             question: q.question,
             misses: inc,
-            lastMiss: Date.now()
+            lastMiss: firebase.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
           return true;
         } catch (err) {
@@ -797,7 +802,7 @@
     }
     window.fetchMostMissed = fetchMostMissed;
 
-    /* typing balloon: adapt width & height while typing; on done set bolder + slightly larger size */
+    /* typing balloon */
     function typeSpeech(text, onDone) {
       stopTyping();
       speechEl.style.fontWeight = '400';
@@ -838,7 +843,6 @@
       playSound(clickSound);
     });
 
-    /* start / load question */
     function startGame() {
       titleImg.style.display = 'none'; menuEl.style.display = 'none'; rankingEl.classList.add('hidden'); resultEl.classList.add('hidden'); quizCard.classList.remove('hidden'); document.body.classList.add('quiz-active');
       quizData = generateQuiz();
@@ -855,7 +859,6 @@
       const q = quizData[currentQuestion];
       questionEl.textContent = ''; optionsEl.innerHTML = '';
 
-      // embaralha alternativas e mantém índice original
       const optOrder = shuffleArrayFisherYates([0, 1, 2, 3]);
       optOrder.forEach(origIndex => {
         const btn = document.createElement('button');
@@ -865,7 +868,6 @@
         optionsEl.appendChild(btn);
       });
 
-      // typing balloon -> quando terminar inicia timer
       speechEl.style.maxHeight = ''; speechEl.style.padding = ''; speechEl.textContent = ''; speechEl.style.display = 'inline-block';
       typeSpeech(q.question, () => {
         questionEl.textContent = q.question;
@@ -874,7 +876,7 @@
       });
     }
 
-    /* timer (separado do balão) */
+    /* timer */
     function startTimer() {
       clearInterval(timerHandle);
       const total = 20; let elapsed = 0;
@@ -886,7 +888,6 @@
         timerEl.textContent = `Tempo: ${timeLeft}s`;
         if (elapsed >= total) {
           clearInterval(timerHandle);
-          // timeout -> contar como erro
           selectAnswer(null, quizData[currentQuestion].correctIndex, true);
         }
       }, 1000);
@@ -918,10 +919,8 @@
         if (multiplier > prevMultiplier) { playSound(multiplierUpSound); showConfetti(); }
         answerStatus[currentQuestion] = 'correct';
       } else {
-        // erro / timeout
         streak = 0; multiplier = 1; playSound(wrongSound);
         answerStatus[currentQuestion] = 'wrong';
-        // registra missed question (remoto/local)
         saveMissedQuestion(q).catch(() => { });
       }
 
@@ -933,7 +932,6 @@
       nextBtn.disabled = false;
     }
 
-    /* próxima */
     nextBtn.addEventListener('click', () => {
       playSound(nextSound);
       currentQuestion++;
@@ -947,122 +945,64 @@
     function openExplainBox() { explainBox.style.display = 'block'; requestAnimationFrame(() => { explainBox.style.maxHeight = '400px'; explainBox.style.padding = '10px'; }); playSound(explainOpenSound); }
     function closeExplainBox() { explainBox.style.maxHeight = '0'; explainBox.style.padding = '0 10px'; setTimeout(() => { explainBox.style.display = 'none'; }, 260); }
 
-    /* resultado */
+    /* resultado: compara com ranking fixo */
     function showResult() {
       stopTimer();
       quizCard.classList.add('hidden'); resultEl.classList.remove('hidden');
 
-      (async () => {
-        const list = await fetchRankingRemote();
-        let insertPos = list.findIndex(e => score > e.score);
-        if (insertPos === -1) insertPos = list.length;
-        let medalFile = null;
-        if (insertPos === 0) medalFile = 'medal_gold.png';
-        else if (insertPos === 1) medalFile = 'medal_silver.png';
-        else if (insertPos === 2) medalFile = 'medal_bronze.png';
-        medalDiv.innerHTML = ''; // evita acumular várias imagens
-        if (medalFile) { const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img); playSound(winSound); }
-        finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${Math.round((correctCount / quizData.length) * 100)}%)`;
-        setTimeout(() => playerNameInput.focus(), 200);
-      })();
-    }
+      // calcula posição entre fixedRanking
+      const list = fixedRanking.slice().sort((a, b) => b.score - a.score);
+      let insertPos = list.findIndex(e => score > e.score);
+      if (insertPos === -1) insertPos = list.length; // se não superou ninguém, posição final
 
-    async function saveRankingRemote(name, pontos) {
-  if (!name || !name.trim()) return { ok: false, reason: 'empty' };
-  if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
+      let medalFile = null;
+      if (insertPos === 0) medalFile = 'medal_gold.png';
+      else if (insertPos === 1) medalFile = 'medal_silver.png';
+      else if (insertPos === 2) medalFile = 'medal_bronze.png';
 
-  // fallback local se Firestore não estiver disponível
-  if (!firebaseAvailable || !db) return saveRankingLocal(name, pontos);
+      medalDiv.innerHTML = '';
+      if (medalFile) { const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img); playSound(winSound); }
 
-  try {
-    // grava usando add() — cria um doc com id aleatório
-    await db.collection('ranking').add({
-      name: name.trim(),
-      score: Number(pontos) || 0,
-      date: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    return { ok: true };
-  } catch (err) {
-    console.error('Erro salvar ranking remoto (add):', err && err.code, err && err.message);
-    // fallback para local
-    return saveRankingLocal(name, pontos, { fallback: true, error: err && err.message });
-  }
-}
+      finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${Math.round((correctCount / quizData.length) * 100)}%)`;
 
-
-    function saveRankingLocal(name, pontos, options = {}) {
-      if (!name || !name.trim()) return { ok: false, reason: 'empty' };
-      if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
-      let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
-      if (list.some(e => e.name === name)) return { ok: false, reason: 'duplicate' };
-      list.push({ name: name.trim(), score: pontos, date: Date.now() });
-      list.sort((a, b) => b.score - a.score || a.date - b.date);
-      list = list.slice(0, 10);
-      localStorage.setItem('quiz_ranking_v2', JSON.stringify(list));
-      if (options.fallback) console.warn('Salvo local por fallback:', options.error || '');
-      return { ok: true };
-    }
-
-    async function fetchRankingRemote() {
-  if (!firebaseAvailable || !db) return fetchRankingLocal();
-  try {
-    const snap = await db.collection('ranking')
-      .orderBy('score', 'desc')
-      .limit(10)
-      .get();
-    return snap.docs.map(d => {
-      const data = d.data();
-      const ts = data.date && data.date.toMillis ? data.date.toMillis() : (data.date || Date.now());
-      return { name: data.name, score: data.score, date: ts };
-    });
-  } catch (err) {
-    console.warn('Erro fetch ranking remoto:', err);
-    return fetchRankingLocal();
-  }
-}
-
-
-    function fetchRankingLocal() { return JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]').slice(0, 10); }
-
-    saveScoreBtn.addEventListener('click', async () => {
-      const name = playerNameInput.value;
-      const res = await saveRankingRemote(name, score);
-      if (!res.ok) {
-        if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); return; }
-        if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); return; }
-        if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); return; }
-        if (res.reason === 'no-auth') { alert('Autenticação não disponível — verifique se a autenticação anônima está habilitada no Firebase Console.'); return; }
-        if (res.reason === 'permission') { alert('Permissão negada ao salvar no Firebase. Verifique suas regras.'); console.error(res); return; }
-        alert('Erro ao salvar no ranking. Tente novamente mais tarde.');
-        console.error(res); return;
+      // dica ao jogador: se quiser ser #1 precise acertar todas (opcional)
+      if (insertPos === 0) {
+        const msg = document.createElement('div'); msg.style.fontWeight = '700'; msg.style.marginTop = '6px'; msg.textContent = 'Parabéns — você superou todos os desafios!';
+        resultEl.appendChild(msg);
+      } else {
+        // mostra quem você não superou
+        const nextToBeat = list[insertPos] || null;
+        if (nextToBeat) {
+          const msg = document.createElement('div'); msg.style.marginTop = '6px';
+          msg.textContent = `Para avançar, supere ${nextToBeat.name} (${nextToBeat.score} pts).`;
+          resultEl.appendChild(msg);
+        }
       }
-      // salvo com sucesso (ou local fallback)
-      playerNameInput.value = '';
-      resultEl.classList.add('hidden'); menuEl.style.display = 'block'; titleImg.style.display = 'block';
-    });
+
+      // foco para re-jogar
+      setTimeout(() => replayBtn.focus(), 200);
+    }
 
     /* replay / ranking / voltar */
     replayBtn.addEventListener('click', () => {
       playSound(clickSound); resultEl.classList.add('hidden'); quizCard.classList.remove('hidden');
+      // limpa mensagens extras inseridas por showResult (mantemos medalDiv)
+      Array.from(resultEl.querySelectorAll('div')).forEach(div => {
+        if (div !== medalDiv && div !== finalScoreText) div.remove();
+      });
       quizData = generateQuiz(); currentQuestion = 0; score = 0; answeredCount = 0; multiplier = 1; streak = 0; correctCount = 0;
       updateScoreDisplay(); updateProgress(); updateStreakIndicator(); loadQuestion();
     });
     viewRankingBtn.addEventListener('click', () => showRanking());
     backToMenuBtn.addEventListener('click', () => { resultEl.classList.add('hidden'); menuEl.style.display = 'block'; titleImg.style.display = 'block'; });
 
-    async function showRanking() {
-      menuEl.style.display = 'none'; quizCard.classList.add('hidden'); resultEl.classList.add('hidden'); rankingEl.classList.remove('hidden');
-      const list = await fetchRankingRemote();
+    /* render ranking fixo */
+    function renderFixedRanking() {
       rankingList.innerHTML = '';
-      if (!list || list.length === 0) {
-        const li = document.createElement('li');
-        li.style.padding = '8px';
-        li.textContent = 'Nenhum resultado ainda — seja o primeiro!';
-        rankingList.appendChild(li);
-        return;
-      }
+      const list = fixedRanking.slice().sort((a, b) => b.score - a.score).slice(0, 5);
       list.forEach((entry, i) => {
-        const li = document.createElement('li'); li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px';
+        const li = document.createElement('li');
+        li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px';
         li.style.padding = '8px'; li.style.borderRadius = '8px'; li.style.marginBottom = '6px'; li.style.background = 'rgba(0,0,0,0.03)';
         const left = document.createElement('div'); left.style.display = 'flex'; left.style.alignItems = 'center'; left.style.gap = '8px';
         if (i === 0) { const img = new Image(); img.src = 'assets/medal_gold.png'; img.style.width = '28px'; left.appendChild(img); }
@@ -1073,7 +1013,40 @@
         li.appendChild(left); li.appendChild(scoreSpan); rankingList.appendChild(li);
       });
     }
+
+    async function showRanking() {
+      menuEl.style.display = 'none'; quizCard.classList.add('hidden'); resultEl.classList.add('hidden'); rankingEl.classList.remove('hidden');
+      renderFixedRanking();
+      // reset missed UI
+      missedContainer.style.display = 'none';
+      missedList.innerHTML = '';
+    }
+
     backBtn.addEventListener('click', () => { rankingEl.classList.add('hidden'); menuEl.style.display = 'block'; });
+
+    /* botão para mostrar as questões mais erradas (apenas leitura, admin) */
+    viewMissedBtn.addEventListener('click', async () => {
+      missedContainer.style.display = 'block';
+      missedList.innerHTML = '<li>Carregando...</li>';
+      try {
+        const arr = await fetchMostMissed(20);
+        missedList.innerHTML = '';
+        if (!arr || arr.length === 0) {
+          missedList.innerHTML = '<li>Nenhuma informação registrada ainda.</li>';
+          return;
+        }
+        arr.forEach(item => {
+          const li = document.createElement('li');
+          const misses = item.misses || 0;
+          const qtxt = item.question || '(sem texto)';
+          li.textContent = `${misses}x — ${qtxt}`;
+          missedList.appendChild(li);
+        });
+      } catch (err) {
+        missedList.innerHTML = '<li>Erro ao buscar dados.</li>';
+        console.warn(err);
+      }
+    });
 
     /* keyboard shortcuts */
     window.addEventListener('keydown', (e) => {
@@ -1105,7 +1078,6 @@
     /* Observação sobre randomização (justificação)
        - Perguntas: uso Fisher–Yates no banco inteiro e depois slice(0, quizSize).
        - Alternativas: embaralho por questão (Fisher–Yates) antes de renderizar.
-       -> isto gera sorteio justo, sem viés (cada execução embaralha uniformemente).
     */
   </script>
 </body>
