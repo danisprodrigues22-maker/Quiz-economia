@@ -537,6 +537,44 @@
 
   <script>
     /* =========================
+       DOM refs (declarar ANTES da inicialização do Firebase / manipulação)
+    */
+    const imgPlay = document.getElementById('imgPlay');
+    const imgRanking = document.getElementById('imgRanking');
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const menuEl = document.getElementById('menu');
+    const quizCard = document.getElementById('quizCard');
+    const resultEl = document.getElementById('result');
+    const rankingEl = document.getElementById('ranking');
+
+    const speechEl = document.getElementById('speech');
+    const timerEl = document.getElementById('timer');
+    const progressBar = document.getElementById('progressBar');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('nextBtn');
+    const showExplainBtn = document.getElementById('showExplainBtn');
+    const explainBox = document.getElementById('explainBox');
+    const explainText = document.getElementById('explainText');
+    const closeExplainBtn = document.getElementById('closeExplainBtn');
+    const playerNameInput = document.getElementById('playerName');
+    const saveScoreBtn = document.getElementById('saveScoreBtn');
+    const finalScoreText = document.getElementById('finalScore');
+    const medalDiv = document.getElementById('medal');
+    const replayBtn = document.getElementById('replayBtn');
+    const viewRankingBtn = document.getElementById('viewRankingBtn');
+    const rankingList = document.getElementById('rankingList');
+    const backBtn = document.getElementById('backBtn');
+    const mascoteEl = document.getElementById('mascote');
+    const titleImg = document.getElementById('titleImg');
+    const backToMenuBtn = document.getElementById('backToMenuBtn');
+
+    // Desabilita botão salvar por padrão até termos auth ok
+    try { saveScoreBtn.disabled = true; } catch (e) { /* fallback */ }
+
+    /* =========================
        Firebase init (compat)
     */
     const firebaseConfig = {
@@ -561,18 +599,32 @@
         // Teste rápido: verificar conexão
         db.collection("ranking").limit(1).get()
           .then(() => console.log("Firestore conectado e pronto."))
-          .catch(err => console.warn("⚠️ Erro ao acessar Firestore:", err));
+          .catch(err => console.warn("⚠️ Erro ao acessar Firestore (regras/índices?):", err));
 
-        // --- Autenticação anônima (para permitir writes condicionados nas regras) ---
+        // Habilitar persistência da auth anônima (compat)
+        if (firebase.auth && firebase.auth().setPersistence) {
+          try {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+              .catch(e => console.warn('Não foi possível setar persistence:', e));
+          } catch (e) {
+            console.warn('setPersistence não suportado nesta build:', e);
+          }
+        }
+
+        // Autenticação anônima
         if (firebase.auth) {
           firebase.auth().onAuthStateChanged(user => {
             if (user) {
               console.log('Firebase Auth: signed in (uid):', user.uid);
+              try { saveScoreBtn.disabled = false; } catch (e) { }
             } else {
-              // tenta login anônimo
+              try { saveScoreBtn.disabled = true; } catch (e) { }
               firebase.auth().signInAnonymously()
                 .then(cred => console.log('Signed in anonymously:', cred.user && cred.user.uid))
-                .catch(err => console.warn('Erro signInAnonymously:', err));
+                .catch(err => {
+                  console.warn('Erro signInAnonymously:', err);
+                  console.warn('➡️ Verifique se a autenticação anônima está habilitada no Firebase Console');
+                });
             }
           });
         } else {
@@ -600,7 +652,8 @@
     const wrongSound = loadAudio('assets/erro.mp3', 0.92, false);
     const nextSound = loadAudio('assets/next.mp3', 0.38, false);
     const winSound = loadAudio('assets/parabens.mp3', 0.9, false);
-    const multiplierUpSound = loadAudio('assets/mult_up_mp3', 0.92, false);
+    // corrigido: nome do arquivo com .mp3
+    const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
     const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
     const clickSound = loadAudio('assets/click.mp3', 0.55, false);
     const explainOpenSound = loadAudio('assets/explain_open.mp3', 0.6, false);
@@ -659,41 +712,6 @@
       { question: "O que é taxa Selic?", options: ["Privatizar estatais", "Taxa básica de juros", "Juros de bancos", "Valor pago a youtubers"], correctIndex: 1, explain: "É a taxa básica de juros que orienta o crédito no país." }
     ];
     const quizSize = 12;
-
-    /* =========================
-       DOM refs
-    */
-    const imgPlay = document.getElementById('imgPlay');
-    const imgRanking = document.getElementById('imgRanking');
-    const soundBtn = document.getElementById('soundBtn');
-    const soundIcon = document.getElementById('soundIcon');
-    const menuEl = document.getElementById('menu');
-    const quizCard = document.getElementById('quizCard');
-    const resultEl = document.getElementById('result');
-    const rankingEl = document.getElementById('ranking');
-
-    const speechEl = document.getElementById('speech');
-    const timerEl = document.getElementById('timer');
-    const progressBar = document.getElementById('progressBar');
-    const questionEl = document.getElementById('question');
-    const optionsEl = document.getElementById('options');
-    const scoreEl = document.getElementById('score');
-    const nextBtn = document.getElementById('nextBtn');
-    const showExplainBtn = document.getElementById('showExplainBtn');
-    const explainBox = document.getElementById('explainBox');
-    const explainText = document.getElementById('explainText');
-    const closeExplainBtn = document.getElementById('closeExplainBtn');
-    const playerNameInput = document.getElementById('playerName');
-    const saveScoreBtn = document.getElementById('saveScoreBtn');
-    const finalScoreText = document.getElementById('finalScore');
-    const medalDiv = document.getElementById('medal');
-    const replayBtn = document.getElementById('replayBtn');
-    const viewRankingBtn = document.getElementById('viewRankingBtn');
-    const rankingList = document.getElementById('rankingList');
-    const backBtn = document.getElementById('backBtn');
-    const mascoteEl = document.getElementById('mascote');
-    const titleImg = document.getElementById('titleImg');
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
 
     /* =========================
        Estado do jogo
@@ -943,38 +961,43 @@
         if (insertPos === 0) medalFile = 'medal_gold.png';
         else if (insertPos === 1) medalFile = 'medal_silver.png';
         else if (insertPos === 2) medalFile = 'medal_bronze.png';
+        medalDiv.innerHTML = ''; // evita acumular várias imagens
         if (medalFile) { const img = new Image(); img.src = 'assets/' + medalFile; img.alt = 'Medalha'; medalDiv.appendChild(img); playSound(winSound); }
         finalScoreText.textContent = `Sua pontuação final: ${score} pontos — Acertos: ${correctCount}/${quizData.length} (${Math.round((correctCount / quizData.length) * 100)}%)`;
         setTimeout(() => playerNameInput.focus(), 200);
       })();
     }
 
-    /* ranking save (remoto com fallback local) */
     async function saveRankingRemote(name, pontos) {
       if (!name || !name.trim()) return { ok: false, reason: 'empty' };
       if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
 
-      // se firebase não disponível, fallback local
       if (!firebaseAvailable || !db) return saveRankingLocal(name, pontos);
 
       try {
-        // checa duplicado por nome (opcional - apenas UI)
+        const user = firebase.auth().currentUser;
+        if (!user || !user.uid) {
+          // autenticação não pronta
+          return { ok: false, reason: 'no-auth' };
+        }
+        const uid = user.uid;
+
+        // opcional: checar duplicado por nome (UI only). mantém-se, mas não impede
         const q = await db.collection('ranking').where('name', '==', name.trim()).limit(1).get();
         if (!q.empty) return { ok: false, reason: 'duplicate' };
 
-        const currentUid = (firebase.auth && firebase.auth().currentUser) ? firebase.auth().currentUser.uid : null;
-
-        // usa serverTimestamp para evitar data forjada
-        await db.collection('ranking').add({
+        // grava como documento com id == uid (conforme suas regras)
+        await db.collection('ranking').doc(uid).set({
           name: name.trim(),
           score: Number(pontos) || 0,
           date: firebase.firestore.FieldValue.serverTimestamp(),
-          uid: currentUid
-        });
+          uid: uid
+        }, { merge: false });
+
         return { ok: true };
       } catch (err) {
         console.error('Erro salvar ranking remoto:', err);
-        // tenta salvar local como fallback
+        if (err && err.code === 'permission-denied') return { ok: false, reason: 'permission' };
         return saveRankingLocal(name, pontos, { fallback: true, error: err.message });
       }
     }
@@ -1002,7 +1025,6 @@
           .get();
         return snap.docs.map(d => {
           const data = d.data();
-          // se date for Timestamp, converte para ms
           const ts = data.date && data.date.toMillis ? data.date.toMillis() : (data.date || Date.now());
           return { name: data.name, score: data.score, date: ts };
         });
@@ -1021,6 +1043,8 @@
         if (res.reason === 'empty') { alert('Digite seu nome para salvar no ranking.'); playerNameInput.focus(); return; }
         if (res.reason === 'length') { alert('Nome deve ter entre 2 e 20 caracteres.'); playerNameInput.focus(); return; }
         if (res.reason === 'duplicate') { alert('Nome já existe no ranking. Use outro nome. (Case-sensitive)'); playerNameInput.focus(); return; }
+        if (res.reason === 'no-auth') { alert('Autenticação não disponível — verifique se a autenticação anônima está habilitada no Firebase Console.'); return; }
+        if (res.reason === 'permission') { alert('Permissão negada ao salvar no Firebase. Verifique suas regras.'); console.error(res); return; }
         alert('Erro ao salvar no ranking. Tente novamente mais tarde.');
         console.error(res); return;
       }
