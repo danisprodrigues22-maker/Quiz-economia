@@ -11,7 +11,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-
   <style>
     :root {
       --bg-blue: #4da6ff;
@@ -537,7 +536,7 @@
   </div>
 
   <script>
-        /* =========================
+    /* =========================
        Firebase init (compat)
     */
     const firebaseConfig = {
@@ -563,6 +562,22 @@
         db.collection("ranking").limit(1).get()
           .then(() => console.log("Firestore conectado e pronto."))
           .catch(err => console.warn("⚠️ Erro ao acessar Firestore:", err));
+
+        // --- Autenticação anônima (para permitir writes condicionados nas regras) ---
+        if (firebase.auth) {
+          firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+              console.log('Firebase Auth: signed in (uid):', user.uid);
+            } else {
+              // tenta login anônimo
+              firebase.auth().signInAnonymously()
+                .then(cred => console.log('Signed in anonymously:', cred.user && cred.user.uid))
+                .catch(err => console.warn('Erro signInAnonymously:', err));
+            }
+          });
+        } else {
+          console.warn('Firebase Auth não disponível (verifique SDK).');
+        }
       }
     } catch (err) {
       console.warn('⚠️ Firebase não inicializado:', err);
@@ -585,7 +600,7 @@
     const wrongSound = loadAudio('assets/erro.mp3', 0.92, false);
     const nextSound = loadAudio('assets/next.mp3', 0.38, false);
     const winSound = loadAudio('assets/parabens.mp3', 0.9, false);
-    const multiplierUpSound = loadAudio('assets/mult_up.mp3', 0.92, false);
+    const multiplierUpSound = loadAudio('assets/mult_up_mp3', 0.92, false);
     const coinSound = loadAudio('assets/coin.mp3', 0.7, false);
     const clickSound = loadAudio('assets/click.mp3', 0.55, false);
     const explainOpenSound = loadAudio('assets/explain_open.mp3', 0.6, false);
@@ -698,7 +713,7 @@
     /* util shuffle */
     function shuffleArrayFisherYates(array) {
       const a = array.slice();
-      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; }
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
       return a;
     }
 
@@ -938,19 +953,65 @@
     async function saveRankingRemote(name, pontos) {
       if (!name || !name.trim()) return { ok: false, reason: 'empty' };
       if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
+
+      // se firebase não disponível, fallback local
       if (!firebaseAvailable || !db) return saveRankingLocal(name, pontos);
+
       try {
-        const q = await db.collection('ranking').where('name', '==', name).limit(1).get();
+        // checa duplicado por nome (opcional - apenas UI)
+        const q = await db.collection('ranking').where('name', '==', name.trim()).limit(1).get();
         if (!q.empty) return { ok: false, reason: 'duplicate' };
-        await db.collection('ranking').add({ name: name.trim(), score: Number(pontos) || 0, date: Date.now() });
+
+        const currentUid = (firebase.auth && firebase.auth().currentUser) ? firebase.auth().currentUser.uid : null;
+
+        // usa serverTimestamp para evitar data forjada
+        await db.collection('ranking').add({
+          name: name.trim(),
+          score: Number(pontos) || 0,
+          date: firebase.firestore.FieldValue.serverTimestamp(),
+          uid: currentUid
+        });
         return { ok: true };
       } catch (err) {
         console.error('Erro salvar ranking remoto:', err);
+        // tenta salvar local como fallback
         return saveRankingLocal(name, pontos, { fallback: true, error: err.message });
       }
     }
-    function saveRankingLocal(name, pontos, options = {}) { if (!name || !name.trim()) return { ok: false, reason: 'empty' }; if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' }; let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]'); if (list.some(e => e.name === name)) return { ok: false, reason: 'duplicate' }; list.push({ name: name.trim(), score: pontos, date: Date.now() }); list.sort((a, b) => b.score - a.score || a.date - b.date); list = list.slice(0, 10); localStorage.setItem('quiz_ranking_v2', JSON.stringify(list)); if (options.fallback) console.warn('Salvo local por fallback:', options.error || ''); return { ok: true }; }
-    async function fetchRankingRemote() { if (!firebaseAvailable || !db) return fetchRankingLocal(); try { const snap = await db.collection('ranking').orderBy('score', 'desc').orderBy('date', 'asc').limit(10).get(); return snap.docs.map(d => ({ name: d.data().name, score: d.data().score, date: d.data().date })); } catch (err) { console.warn('Erro fetch ranking remoto:', err); return fetchRankingLocal(); } }
+
+    function saveRankingLocal(name, pontos, options = {}) {
+      if (!name || !name.trim()) return { ok: false, reason: 'empty' };
+      if (name.length < 2 || name.length > 20) return { ok: false, reason: 'length' };
+      let list = JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]');
+      if (list.some(e => e.name === name)) return { ok: false, reason: 'duplicate' };
+      list.push({ name: name.trim(), score: pontos, date: Date.now() });
+      list.sort((a, b) => b.score - a.score || a.date - b.date);
+      list = list.slice(0, 10);
+      localStorage.setItem('quiz_ranking_v2', JSON.stringify(list));
+      if (options.fallback) console.warn('Salvo local por fallback:', options.error || '');
+      return { ok: true };
+    }
+
+    async function fetchRankingRemote() {
+      if (!firebaseAvailable || !db) return fetchRankingLocal();
+      try {
+        const snap = await db.collection('ranking')
+          .orderBy('score', 'desc')
+          .orderBy('date', 'asc')
+          .limit(10)
+          .get();
+        return snap.docs.map(d => {
+          const data = d.data();
+          // se date for Timestamp, converte para ms
+          const ts = data.date && data.date.toMillis ? data.date.toMillis() : (data.date || Date.now());
+          return { name: data.name, score: data.score, date: ts };
+        });
+      } catch (err) {
+        console.warn('Erro fetch ranking remoto:', err);
+        return fetchRankingLocal();
+      }
+    }
+
     function fetchRankingLocal() { return JSON.parse(localStorage.getItem('quiz_ranking_v2') || '[]').slice(0, 10); }
 
     saveScoreBtn.addEventListener('click', async () => {
@@ -963,7 +1024,9 @@
         alert('Erro ao salvar no ranking. Tente novamente mais tarde.');
         console.error(res); return;
       }
-      playerNameInput.value = ''; resultEl.classList.add('hidden'); menuEl.style.display = 'block'; titleImg.style.display = 'block';
+      // salvo com sucesso (ou local fallback)
+      playerNameInput.value = '';
+      resultEl.classList.add('hidden'); menuEl.style.display = 'block'; titleImg.style.display = 'block';
     });
 
     /* replay / ranking / voltar */
@@ -979,6 +1042,13 @@
       menuEl.style.display = 'none'; quizCard.classList.add('hidden'); resultEl.classList.add('hidden'); rankingEl.classList.remove('hidden');
       const list = await fetchRankingRemote();
       rankingList.innerHTML = '';
+      if (!list || list.length === 0) {
+        const li = document.createElement('li');
+        li.style.padding = '8px';
+        li.textContent = 'Nenhum resultado ainda — seja o primeiro!';
+        rankingList.appendChild(li);
+        return;
+      }
       list.forEach((entry, i) => {
         const li = document.createElement('li'); li.style.display = 'flex'; li.style.alignItems = 'center'; li.style.gap = '8px';
         li.style.padding = '8px'; li.style.borderRadius = '8px'; li.style.marginBottom = '6px'; li.style.background = 'rgba(0,0,0,0.03)';
