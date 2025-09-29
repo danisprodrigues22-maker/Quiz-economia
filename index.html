@@ -694,11 +694,12 @@
     const quizSize = 12;
 
     /* =========================
-       Ranking fixo calibrado para máximo = 12 acertos => 178 pontos
-       Proporções: 100%, 85%, 70%, 55%, 40%
+       Ranking fixo calibrado para máximo = 12 acertos => 178 pontos (pontuação do jogador)
+       alteração solicitada: Adam Smith fixo em 175 pts
+       Proporções originais: 100%, 85%, 70%, 55%, 40% (mantidas para os demais)
     */
     const fixedRanking = [
-      { name: "Adam Smith", score: 175 },       // 100% -> exige 12/12
+      { name: "Adam Smith", score: 175 },       // ajustado para 175 conforme pedido
       { name: "John Maynard Keynes", score: 151 }, // ~85%
       { name: "Milton Friedman", score: 125 },  // ~70%
       { name: "Amartya Sen", score: 98 },       // ~55%
@@ -1017,4 +1018,3 @@
 </body>
 
 </html>
-
